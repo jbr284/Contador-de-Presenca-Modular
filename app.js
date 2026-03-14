@@ -172,7 +172,7 @@ window.salvarTodosOsDados = async function() {
 }
 
 // =========================================================
-// O MOTOR DA ABA DADOS (SANFONA, PESQUISA E CARDS)
+// O MOTOR DA ABA DADOS (SANFONA, PESQUISA E TABELA EXCEL)
 // =========================================================
 
 // 1. Puxar todos os dados do Firebase
@@ -186,7 +186,7 @@ window.carregarHistoricoNuvem = async function() {
         
         querySnapshot.forEach((doc) => {
             historicoCompleto.push({
-                id: doc.id, // Ex: "02 a 06 mar de 2026"
+                id: doc.id, 
                 dados: doc.data().dados,
                 atualizado: doc.data().ultimaAtualizacao
             });
@@ -240,45 +240,67 @@ function renderizarSanfona(termoBusca) {
     });
 }
 
-// 4. Transformar Dados em Cards Mobile
+// 4. Transformar Dados em Tabela Estilo Excel (Substitui os antigos Cards)
 function gerarHTMLCardsResponsivos(dadosDaSemana) {
-    let html = '<div class="resp-grid">';
-    const areas = ['Fabricação', 'Estrutural', 'Mont. Final', 'Painéis'];
-    
-    areas.forEach(area => {
-        const linhasArea = dadosDaSemana.filter(d => d.area === area);
-        let somaTotalArea = 0;
-        
-        let areaHtml = `<div class="resp-card">
-            <div class="resp-card-header">${area}</div>
-            <div class="resp-turnos-container">`;
+    let totaisDias = [0, 0, 0, 0, 0];
+    let totalGeralSemana = 0;
 
-        linhasArea.forEach(linha => {
-            let somaTurno = linha.dias.reduce((a, b) => a + (b === "" ? 0 : parseInt(b)), 0);
-            somaTotalArea += somaTurno;
+    let html = `
+    <div class="hist-table-wrapper">
+        <table class="hist-table">
+            <thead>
+                <tr>
+                    <th>Área</th>
+                    <th>Turno</th>
+                    <th>S</th><th>T</th><th>Q</th><th>Q</th><th>S</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
 
-            areaHtml += `
-                <div class="resp-turno-row">
-                    <div class="resp-badge">${linha.turno}</div>
-                    <div class="resp-dias">
-                        <span><b>S:</b> ${linha.dias[0]||0}</span>
-                        <span><b>T:</b> ${linha.dias[1]||0}</span>
-                        <span><b>Q:</b> ${linha.dias[2]||0}</span>
-                        <span><b>Q:</b> ${linha.dias[3]||0}</span>
-                        <span><b>S:</b> ${linha.dias[4]||0}</span>
-                    </div>
-                    <div class="resp-total-turno">${somaTurno}</div>
-                </div>`;
+    dadosDaSemana.forEach((linha, index) => {
+        let somaLinha = 0;
+        let colunasDias = '';
+
+        linha.dias.forEach((val, i) => {
+            let num = val === "" ? 0 : parseInt(val);
+            somaLinha += num;
+            totaisDias[i] += num;
+            colunasDias += `<td>${val}</td>`;
         });
+
+        totalGeralSemana += somaLinha;
+
+        html += `<tr>`;
         
-        areaHtml += `</div>
-            <div class="resp-card-footer">Total de Faltas: <b>${somaTotalArea}</b></div>
-        </div>`;
+        if (index % 2 === 0) {
+            html += `<td rowspan="2" class="td-area-hist">${linha.area}</td>`;
+        }
         
-        html += areaHtml;
+        html += `
+            <td class="td-turno-hist">${linha.turno}</td>
+            ${colunasDias}
+            <td class="td-total-hist">${somaLinha}</td>
+        </tr>`;
     });
-    
-    html += '</div>';
+
+    html += `
+            </tbody>
+            <tfoot>
+                <tr class="row-total-hist">
+                    <td colspan="2" style="text-align: right; padding-right: 15px;">TOTAL GERAL</td>
+                    <td>${totaisDias[0]}</td>
+                    <td>${totaisDias[1]}</td>
+                    <td>${totaisDias[2]}</td>
+                    <td>${totaisDias[3]}</td>
+                    <td>${totaisDias[4]}</td>
+                    <td>${totalGeralSemana}</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>`;
+
     return html;
 }
 
