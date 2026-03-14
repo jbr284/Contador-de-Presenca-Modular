@@ -154,7 +154,7 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 
 
 /* ========================================================= */
-/* --- NOVO VISUAL DA ABA DADOS (PESQUISA, SANFONA E CARDS) --- */
+/* --- NOVO VISUAL DA ABA DADOS (PESQUISA, SANFONA E TABELA) --- */
 /* ========================================================= */
 
 /* --- BARRA DE PESQUISA --- */
@@ -226,61 +226,48 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
     border-top: 1px solid var(--border);
 }
 
-/* --- CARDS RESPONSIVOS (DENTRO DA SANFONA) --- */
-.resp-grid { display: flex; flex-direction: column; gap: 15px; }
-.resp-card {
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    overflow: hidden;
+/* --- TABELA DENTRO DA SANFONA (ESTILO EXCEL) --- */
+.hist-table-wrapper {
+    width: 100%;
+    overflow-x: auto; /* Permite rolar para o lado no celular sem quebrar a tela */
+    background: white;
 }
-.resp-card-header {
-    background: var(--primary);
-    color: white;
-    padding: 8px 12px;
+.hist-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 500px; /* Força a tabela a manter o formato mesmo em telas pequenas */
     font-size: 13px;
-    font-weight: bold;
-    text-transform: uppercase;
-}
-.resp-turno-row {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px dashed var(--border);
-    background: #fafafa;
-}
-.resp-turno-row:last-child { border-bottom: none; }
-.resp-badge {
-    background: #e2e8f0;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: bold;
-    color: var(--text-main);
-    margin-right: 10px;
-    min-width: 35px;
     text-align: center;
 }
-.resp-dias {
-    display: flex;
-    flex: 1;
-    gap: 5px;
-    justify-content: space-around;
-    font-size: 13px;
+.hist-table th, .hist-table td {
+    border: 1px solid #94a3b8; /* Linhas de grade mais escuras estilo Excel */
+    padding: 10px 6px;
+}
+.hist-table th {
+    background-color: #f8fafc;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-size: 11px;
+}
+.td-area-hist {
+    font-weight: 600;
+    text-align: left;
+    padding-left: 10px !important;
+    background-color: #f8fafc;
+}
+.td-turno-hist {
+    font-weight: 600;
     color: var(--text-muted);
 }
-.resp-dias b { color: var(--text-main); }
-.resp-total-turno {
-    font-weight: 900;
-    color: var(--primary);
-    font-size: 15px;
-    margin-left: 10px;
-    min-width: 30px;
-    text-align: right;
+.td-total-hist {
+    font-weight: bold;
+    color: var(--text-main);
+    background-color: #f1f5f9;
 }
-.resp-card-footer {
-    padding: 8px 12px;
-    background: var(--excel-header);
-    text-align: right;
-    font-size: 13px;
-    color: #065f46;
+.row-total-hist td {
+    background-color: var(--excel-header);
+    font-weight: 700;
+    color: var(--primary);
+    border-top: 2px solid #22c55e !important; /* Linha verde mais grossa separando o total */
 }
