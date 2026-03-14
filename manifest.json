@@ -1,7 +1,7 @@
 {
-  "name": "Apontamento de Faltas - Produção",
-  "short_name": "Faltas Prod.",
-  "description": "Sistema de apontamento de faltas e geração de relatórios.",
+  "name": "Contador de Presença",
+  "short_name": "Presença",
+  "description": "Sistema de apontamento de faltas e geração de relatórios da produção.",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f1f5f9",
