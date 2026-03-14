@@ -2,7 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-// SUAS CHAVES DO PROJETO "INDICADOR DE PRESENÇA MODULAR"
+// CHAVES DO PROJETO "INDICADOR DE PRESENÇA MODULAR"
 const firebaseConfig = {
   apiKey: "AIzaSyAZsg2GbxrgX70VZwPHiXkoFMCTt7i3_6U",
   authDomain: "indicador-de-presenca-modular.firebaseapp.com",
@@ -12,7 +12,6 @@ const firebaseConfig = {
   appId: "1:895253390208:web:943f8679a0dbf36a531765"
 };
 
-// Inicializa o Firebase e o Banco de Dados (Firestore)
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -21,7 +20,7 @@ let textoVerticalCalculado = "";
 let chaveBancoAtual = ""; 
 let dadosAtuais = []; 
 
-// Retorna a matriz limpa
+// Retorna a matriz limpa (COM CAMPOS VAZIOS EM VEZ DE ZEROS)
 function getEstruturaZerada() {
     return [
         { area: 'Fabricação', turno: '1º', dias: ['','','','',''] }, { area: 'Fabricação', turno: '2º', dias: ['','','','',''] },
@@ -72,26 +71,21 @@ window.processarDataCalendario = async function() {
         textoVerticalCalculado = `${diaSeg} ${mesSeg} a ${diaSex} ${mesSex}`; 
     }
 
-    // A Chave agora é o ID do Documento lá no Firestore (Ex: "23 a 27 fev de 2026")
     chaveBancoAtual = `${textoVerticalCalculado} de ${anoSeg}`;
 
-    // Mostra aviso de carregamento enquanto vai no servidor do Google
     const displaySemana = document.getElementById('display-semana-calculada');
     displaySemana.innerHTML = `<i class="fa-solid fa-spinner fa-spin" style="margin-right:8px;"></i> Buscando na nuvem...`;
     
     try {
-        // Puxa o documento exato desta semana
         const docRef = doc(db, "faltas_producao", chaveBancoAtual);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
             dadosAtuais = docSnap.data().dados;
         } else {
-            // Se não encontrou, zera a tela para novos apontamentos
             dadosAtuais = getEstruturaZerada();
         }
 
-        // Tira o loading e mostra a data confirmada
         displaySemana.innerHTML = `<i class="fa-regular fa-calendar-check" style="margin-right:8px;"></i> ${textoVerticalCalculado}`;
         document.getElementById('label-resumo-periodo').innerText = textoVerticalCalculado;
 
@@ -141,10 +135,8 @@ window.salvarTodosOsDados = async function() {
     const btn = document.getElementById('btn-save');
     const originalHtml = btn.innerHTML;
     
-    // Muda o botão para mostrar que está salvando na nuvem
     btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Sincronizando com a Nuvem...`;
     
-    // Captura os dados digitados na tela
     dadosAtuais.forEach((linha, indexBD) => {
         for(let i=0; i<5; i++) {
             let valorDigitado = document.getElementById(`in-${indexBD}-${i}`).value;
@@ -153,13 +145,11 @@ window.salvarTodosOsDados = async function() {
     });
 
     try {
-        // Envia para o Firestore, gravando o documento com o nome da semana
         await setDoc(doc(db, "faltas_producao", chaveBancoAtual), {
             dados: dadosAtuais,
             ultimaAtualizacao: new Date().toISOString()
         });
 
-        // Sucesso visual
         btn.innerHTML = `<i class="fa-solid fa-check"></i> Salvo na Nuvem!`;
         btn.style.backgroundColor = 'var(--success)';
         
@@ -172,7 +162,7 @@ window.salvarTodosOsDados = async function() {
     } catch (error) {
         console.error("Erro ao gravar no Firebase: ", error);
         btn.innerHTML = `<i class="fa-solid fa-xmark"></i> Falha ao Salvar. Tente de novo.`;
-        btn.style.backgroundColor = '#dc2626'; // Vermelho de erro
+        btn.style.backgroundColor = '#dc2626'; 
         setTimeout(() => { 
             btn.innerHTML = originalHtml; 
             btn.style.backgroundColor = ''; 
@@ -266,7 +256,6 @@ window.gerarExcel = async function() {
     totalRow.getCell('H').value = { formula: 'SUM(H2:H9)' }; totalRow.getCell('I').value = { formula: 'SUM(I2:I9)' }; 
     totalRow.font = { bold: true }; totalRow.alignment = { vertical: 'middle', horizontal: 'center' };
 
-    // MESCLAGENS EXCEL
     worksheet.mergeCells('A2:A9');
     const cellSemana = worksheet.getCell('A2');
     cellSemana.value = textoVerticalCalculado.replace(' a ', '\n a \n'); 
