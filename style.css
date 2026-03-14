@@ -1,164 +1,127 @@
-/* --- VARIÁVEIS DO SISTEMA --- */
-:root {
-    --primary: #1e3a8a; /* Azul corporativo escuro */
-    --primary-hover: #1e40af;
-    --accent: #3b82f6; /* Azul claro para destaques */
-    --bg-color: #f1f5f9; /* Fundo cinza bem claro */
-    --card-bg: #ffffff;
-    --text-main: #0f172a;
-    --text-muted: #64748b;
-    --border: #e2e8f0;
-    --success: #16a34a;
-    --excel-header: #dcfce7;
-}
-
-/* --- RESET GLOBAL --- */
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-smoothing: antialiased; }
-
-/* --- HEADER (CABEÇALHO DO SISTEMA) --- */
-.sys-header {
-    background-color: var(--primary);
-    color: white;
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-.sys-header h1 { font-size: 18px; font-weight: 600; letter-spacing: 0.5px; }
-
-/* --- NAVEGAÇÃO (ABAS MODERNAS ESTILO APP) --- */
-.nav-tabs {
-    display: flex;
-    background: #e2e8f0; 
-    padding: 6px;
-    margin: 20px 15px 0; 
-    border-radius: 12px;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06); 
-    max-width: 770px;
-}
-
-@media (min-width: 800px) {
-    .nav-tabs { margin: 20px auto 0; }
-}
-
-.nav-tab {
-    flex: 1;
-    text-align: center;
-    padding: 12px 10px;
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--text-muted);
-    cursor: pointer;
-    border-radius: 8px; 
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px; 
-}
-
-.nav-tab:hover { color: var(--primary); }
-
-.nav-tab.active {
-    color: var(--primary);
-    background-color: var(--card-bg); 
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1); 
-}
-
-/* --- CONTAINER PRINCIPAL --- */
-.main-content { max-width: 800px; margin: 0 auto; padding: 20px 15px 60px; }
-.tab-pane { display: none; animation: fadeIn 0.3s ease; }
-.tab-pane.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-/* --- COMPONENTES (CARDS) --- */
-.sys-card {
-    background: var(--card-bg);
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    padding: 20px;
+/* --- BARRA DE PESQUISA (NOVA ABA DADOS) --- */
+.search-bar {
+    position: relative;
     margin-bottom: 20px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+}
+.search-bar input {
+    width: 100%;
+    padding: 12px 12px 12px 40px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    color: var(--text-main);
+    background-color: #f8fafc;
+    transition: 0.2s;
+}
+.search-bar input:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+    background-color: #fff;
 }
 
-.sys-card-title {
-    font-size: 13px;
-    text-transform: uppercase;
-    color: var(--text-muted);
+/* --- SANFONA (ACCORDION) --- */
+.accordion-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+.acc-item {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+    overflow: hidden;
+}
+.acc-header {
+    padding: 15px;
+    background: #f8fafc;
     font-weight: 700;
-    margin-bottom: 15px;
-    letter-spacing: 0.5px;
+    color: var(--primary);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.acc-header:hover { background: #f1f5f9; }
+.acc-icon { transition: transform 0.3s ease; }
+.acc-item.active .acc-icon { transform: rotate(180deg); }
+
+.acc-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    background: #fff;
+}
+.acc-item.active .acc-content {
+    max-height: 2000px; /* Altura suficiente para o conteúdo expandir */
+    padding: 15px;
+    border-top: 1px solid var(--border);
 }
 
-/* --- INPUTS E FORMULÁRIOS --- */
-.input-group { margin-bottom: 15px; }
-.input-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
-.sys-input {
-    width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 6px;
-    font-size: 15px; color: var(--text-main); transition: 0.2s; background-color: #f8fafc;
+/* --- CARDS RESPONSIVOS (DENTRO DA SANFONA) --- */
+.resp-grid { display: flex; flex-direction: column; gap: 15px; }
+.resp-card {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
 }
-.sys-input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); background-color: #fff; }
-
-.date-display {
-    text-align: center; margin-top: 10px; padding: 12px;
-    background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px;
-    color: #1e40af; font-size: 16px; font-weight: bold;
+.resp-card-header {
+    background: var(--primary);
+    color: white;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: uppercase;
 }
-
-/* --- GRID DE APONTAMENTO (CHÃO DE FÁBRICA) --- */
-.factory-area-card {
-    background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
-    margin-bottom: 16px; overflow: hidden;
+.resp-turno-row {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px dashed var(--border);
+    background: #fafafa;
 }
-.factory-area-header {
-    background: #f8fafc; padding: 12px 16px; font-weight: 700; color: var(--text-main);
-    border-bottom: 1px solid var(--border); display: flex; align-items: center;
+.resp-turno-row:last-child { border-bottom: none; }
+.resp-badge {
+    background: #e2e8f0;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--text-main);
+    margin-right: 10px;
+    min-width: 35px;
+    text-align: center;
 }
-.factory-area-header::before {
-    content: ''; display: inline-block; width: 8px; height: 8px;
-    background-color: var(--primary); border-radius: 50%; margin-right: 10px;
+.resp-dias {
+    display: flex;
+    flex: 1;
+    gap: 5px;
+    justify-content: space-around;
+    font-size: 13px;
+    color: var(--text-muted);
 }
-.shift-row { display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px dashed var(--border); }
-.shift-row:last-child { border-bottom: none; }
-.shift-label { width: 45px; font-size: 14px; font-weight: 700; color: var(--text-muted); }
-.days-grid { display: flex; gap: 8px; flex: 1; }
-.day-cell { flex: 1; text-align: center; }
-.day-cell label { display: block; font-size: 10px; font-weight: 700; color: #94a3b8; margin-bottom: 4px; }
-.day-cell input {
-    width: 100%; padding: 10px 0; text-align: center; border: 1px solid var(--border);
-    border-radius: 6px; font-size: 16px; font-weight: 700; color: var(--primary);
-    background-color: #f8fafc; transition: all 0.2s ease;
+.resp-dias b { color: var(--text-main); }
+.resp-total-turno {
+    font-weight: 900;
+    color: var(--primary);
+    font-size: 15px;
+    margin-left: 10px;
+    min-width: 30px;
+    text-align: right;
 }
-.day-cell input:focus { border-color: var(--accent); background-color: #fff; box-shadow: 0 2px 4px rgba(59,130,246,0.1); transform: scale(1.05); }
-
-/* --- BOTÕES --- */
-.sys-btn {
-    width: 100%; padding: 14px; border: none; border-radius: 8px;
-    font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
+.resp-card-footer {
+    padding: 8px 12px;
+    background: var(--excel-header);
+    text-align: right;
+    font-size: 13px;
+    color: #065f46;
 }
-.btn-primary { background-color: var(--primary); color: white; }
-.btn-primary:hover { background-color: var(--primary-hover); }
-.btn-primary:active { transform: scale(0.98); }
-
-.btn-excel { background-color: var(--success); color: white; margin-top: 20px; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2); }
-.btn-excel:hover { background-color: #15803d; }
-.btn-excel:active { transform: scale(0.98); }
-
-/* --- TABELA PREVIEW --- */
-.preview-wrapper { width: 100%; overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; background: white; }
-table { width: 100%; border-collapse: collapse; min-width: 600px; font-size: 13px; }
-th, td { border: 1px solid var(--border); padding: 10px 6px; text-align: center; }
-th { background-color: #f8fafc; font-weight: 700; color: var(--text-muted); text-transform: uppercase; font-size: 11px; }
-.td-semana { writing-mode: vertical-rl; transform: rotate(180deg); font-weight: 700; background: #f8fafc; color: var(--primary); padding: 10px !important; }
-.td-area { font-weight: 600; text-align: left; padding-left: 12px; }
-.td-turno { font-weight: 600; color: var(--text-muted); }
-.td-val { font-weight: 600; color: var(--text-main); }
-.row-total td { background-color: var(--excel-header); font-weight: 700; color: var(--primary); border-top: 2px solid #22c55e;}
