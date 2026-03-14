@@ -39,22 +39,24 @@ self.addEventListener('activate', (event) => {
 
 // INTERCEPTAÇÃO (Estratégia: Network First, caindo para Cache)
 self.addEventListener('fetch', (event) => {
-  // Ignora requisições do Firebase/Firestore (Deixa passar direto pra internet)
-  if (event.request.url.includes('firestore.googleapis.com') || event.request.url.includes('firebase')) {
+  
+  const url = new URL(event.request.url);
+  
+  // REGRA DE OURO: Se o link não for do nosso próprio site (ex: Firebase, Google, etc)
+  // Ignora o Service Worker e deixa a internet funcionar normalmente.
+  if (url.origin !== location.origin) {
     return;
   }
 
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
-        // Se pegou da internet com sucesso, atualiza o cache invisivelmente
         return caches.open(CACHE_NAME).then((cache) => {
           cache.put(event.request, networkResponse.clone());
           return networkResponse;
         });
       })
       .catch(() => {
-        // Se a internet falhar (offline), busca no cache do celular
         return caches.match(event.request);
       })
   );
