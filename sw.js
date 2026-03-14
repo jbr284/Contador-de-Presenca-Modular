@@ -1,4 +1,4 @@
-const CACHE_NAME = 'app-faltas-v1';
+const CACHE_NAME = 'app-faltas-v2';
 
 // Arquivos estruturais do sistema (Interface e Lógica)
 const ASSETS_TO_CACHE = [
@@ -22,7 +22,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// ATIVAÇÃO: Limpa caches antigos se você atualizar a versão (v2, v3...)
+// ATIVAÇÃO: Limpa caches antigos se você atualizar a versão
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keyList) => {
