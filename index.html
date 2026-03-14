@@ -1,19 +1,16 @@
-<!DOCTYPE html>
+l<!DOCTYPE html>
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  
   <title>Contador de Presença</title>
   
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1e3a8a">
-  
   <link rel="icon" type="image/png" href="icons/icon-192x192.png">
   <link rel="apple-touch-icon" href="icons/icon-192x192.png">
   
   <link rel="stylesheet" href="style.css">
-  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -26,30 +23,26 @@
       <div id="tab-btn-registro" class="nav-tab active" onclick="mudarAba('registro')">
           <i class="fa-solid fa-pen-to-square"></i> Lançamentos
       </div>
-      <div id="tab-btn-relatorio" class="nav-tab" onclick="mudarAba('relatorio')">
-          <i class="fa-solid fa-file-excel"></i> Exportar Dados
+      <div id="tab-btn-dados" class="nav-tab" onclick="mudarAba('dados')">
+          <i class="fa-solid fa-database"></i> Dados
       </div>
   </nav>
 
   <main class="main-content">
       
       <section id="aba-registro" class="tab-pane active">
-          
           <div class="sys-card">
-              <div class="sys-card-title">Parâmetros do Relatório</div>
-              
+              <div class="sys-card-title">Parâmetros do Lançamento</div>
               <div class="input-group">
                   <label class="input-label">Selecione uma data na semana de referência</label>
                   <input type="date" id="input-data" class="sys-input" onchange="processarDataCalendario()">
               </div>
-              
               <div id="display-semana-calculada" class="date-display">
                   <i class="fa-solid fa-spinner fa-spin"></i> Carregando...
               </div>
           </div>
 
           <div class="sys-card-title" style="margin-top: 30px;">Planilha de Produção</div>
-          
           <div id="form-areas"></div>
 
           <button class="sys-btn btn-primary" onclick="salvarTodosOsDados()" id="btn-save">
@@ -57,57 +50,36 @@
           </button>
       </section>
 
-      <section id="aba-relatorio" class="tab-pane">
-          
+      <section id="aba-dados" class="tab-pane">
           <div class="sys-card">
-              <div class="sys-card-title">Pré-visualização do Arquivo</div>
-              <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">
-                  Período: <strong id="label-resumo-periodo" style="color: var(--primary);"></strong>
-              </p>
-
-              <div class="preview-wrapper">
-                  <table id="tabela-preview">
-                      <thead>
-                          <tr>
-                              <th>Sem.</th><th>Área</th><th>Turno</th>
-                              <th>S</th><th>T</th><th>Q</th><th>Q</th><th>S</th>
-                              <th>Total</th>
-                          </tr>
-                      </thead>
-                      <tbody id="tabela-body"></tbody>
-                      <tfoot id="tabela-foot">
-                          <tr class="row-total">
-                              <td colspan="3" style="text-align: right; padding-right: 15px;">TOTAL GERAL</td>
-                              <td id="tot-s1">0</td><td id="tot-t">0</td><td id="tot-q1">0</td>
-                              <td id="tot-q2">0</td><td id="tot-s2">0</td><td id="tot-geral">0</td>
-                          </tr>
-                      </tfoot>
-                  </table>
+              <div class="sys-card-title">Histórico de Apontamentos</div>
+              
+              <div class="search-bar">
+                  <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                  <input type="text" id="input-busca" placeholder="Buscar semana (Ex: fev, mar...)" oninput="filtrarSanfona()">
               </div>
 
-              <button class="sys-btn btn-excel" onclick="gerarExcel()">
-                  <i class="fa-solid fa-download"></i> Gerar Arquivo Excel Nativo
+              <div id="accordion-container" class="accordion-wrapper">
+                  </div>
+
+              <button class="sys-btn btn-excel" onclick="gerarExcelMestre()">
+                  <i class="fa-solid fa-download"></i> Exportar Planilha Mestre (.xlsx)
               </button>
           </div>
-
       </section>
 
   </main>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-  
   <script type="module" src="app.js"></script>
 
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then((reg) => console.log('Service Worker registrado com sucesso!', reg))
-          .catch((err) => console.log('Erro no Service Worker', err));
+        navigator.serviceWorker.register('./sw.js');
       });
     }
   </script>
-
 </body>
 </html>
