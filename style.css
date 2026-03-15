@@ -229,18 +229,17 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 /* --- TABELA DENTRO DA SANFONA (ESTILO EXCEL) --- */
 .hist-table-wrapper {
     width: 100%;
-    overflow-x: auto; /* Permite rolar para o lado no celular sem quebrar a tela */
+    overflow-x: auto; 
     background: white;
 }
 .hist-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 500px; /* Força a tabela a manter o formato mesmo em telas pequenas */
     font-size: 13px;
     text-align: center;
 }
 .hist-table th, .hist-table td {
-    border: 1px solid #94a3b8; /* Linhas de grade mais escuras estilo Excel */
+    border: 1px solid #94a3b8; 
     padding: 10px 6px;
 }
 .hist-table th {
@@ -269,5 +268,38 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
     background-color: var(--excel-header);
     font-weight: 700;
     color: var(--primary);
-    border-top: 2px solid #22c55e !important; /* Linha verde mais grossa separando o total */
+    border-top: 2px solid #22c55e !important; 
+}
+
+
+/* ========================================================= */
+/* --- MÁGICA DE REDUÇÃO PROPORCIONAL PARA CELULARES (ZOOM OUT) --- */
+/* ========================================================= */
+@media (max-width: 500px) {
+    .hist-table {
+        font-size: 10px; /* Reduz a fonte principal */
+    }
+    .hist-table th, .hist-table td {
+        padding: 6px 2px; /* Encolhe o padding (espaço interno) quase a zero nas laterais */
+    }
+    .hist-table th {
+        font-size: 9px; /* Cabeçalhos menores */
+        padding: 5px 1px;
+    }
+    .td-area-hist {
+        font-size: 10px;
+        padding-left: 4px !important; /* Libera espaço na esquerda da coluna de Área */
+        letter-spacing: -0.3px; /* Aproxima um pouco as letras para ganhar milímetros */
+    }
+    .row-total-hist td {
+        font-size: 10px;
+        padding: 8px 2px !important;
+    }
+}
+
+/* Regra extrema para celulares muito finos (ex: iPhone SE) */
+@media (max-width: 380px) {
+    .hist-table { font-size: 9.5px; }
+    .hist-table th { font-size: 8.5px; }
+    .td-area-hist { font-size: 9.5px; }
 }
