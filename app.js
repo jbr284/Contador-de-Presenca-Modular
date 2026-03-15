@@ -19,9 +19,9 @@ const db = getFirestore(app);
 let textoVerticalCalculado = ""; 
 let chaveBancoAtual = ""; 
 let dadosAtuais = []; 
-let historicoCompleto = []; // Guarda o histórico da aba Dados
+let historicoCompleto = []; 
 
-// Retorna a matriz limpa (COM CAMPOS VAZIOS EM VEZ DE ZEROS)
+// Retorna a matriz limpa
 function getEstruturaZerada() {
     return [
         { area: 'Fabricação', turno: '1º', dias: ['','','','',''] }, { area: 'Fabricação', turno: '2º', dias: ['','','','',''] },
@@ -39,7 +39,6 @@ window.mudarAba = function(abaDestino) {
     document.getElementById(`tab-btn-${abaDestino}`).classList.add('active');
     document.getElementById(`aba-${abaDestino}`).classList.add('active');
 
-    // Se clicou na aba DADOS, puxa o histórico da nuvem
     if(abaDestino === 'dados') { 
         carregarHistoricoNuvem(); 
     }
@@ -114,15 +113,16 @@ function renderizarFormularioLote() {
             const indexBD = dadosAtuais.findIndex(d => d.area === nomeArea && d.turno === nomeTurno);
             const valores = dadosAtuais[indexBD].dias;
             
+            // Aqui adicionamos o "T" no turno e os rótulos de seg, ter, qua...
             htmlInterno += `
             <div class="shift-row">
-                <div class="shift-label">${nomeTurno}</div>
+                <div class="shift-label">${nomeTurno} T</div>
                 <div class="days-grid">
-                    <div class="day-cell"><label>S</label><input type="number" min="0" id="in-${indexBD}-0" value="${valores[0]}"></div>
-                    <div class="day-cell"><label>T</label><input type="number" min="0" id="in-${indexBD}-1" value="${valores[1]}"></div>
-                    <div class="day-cell"><label>Q</label><input type="number" min="0" id="in-${indexBD}-2" value="${valores[2]}"></div>
-                    <div class="day-cell"><label>Q</label><input type="number" min="0" id="in-${indexBD}-3" value="${valores[3]}"></div>
-                    <div class="day-cell"><label>S</label><input type="number" min="0" id="in-${indexBD}-4" value="${valores[4]}"></div>
+                    <div class="day-cell"><label>seg</label><input type="number" min="0" id="in-${indexBD}-0" value="${valores[0]}"></div>
+                    <div class="day-cell"><label>ter</label><input type="number" min="0" id="in-${indexBD}-1" value="${valores[1]}"></div>
+                    <div class="day-cell"><label>qua</label><input type="number" min="0" id="in-${indexBD}-2" value="${valores[2]}"></div>
+                    <div class="day-cell"><label>qui</label><input type="number" min="0" id="in-${indexBD}-3" value="${valores[3]}"></div>
+                    <div class="day-cell"><label>sex</label><input type="number" min="0" id="in-${indexBD}-4" value="${valores[4]}"></div>
                 </div>
             </div>`;
         });
@@ -172,10 +172,9 @@ window.salvarTodosOsDados = async function() {
 }
 
 // =========================================================
-// O MOTOR DA ABA DADOS (SANFONA, PESQUISA E TABELA EXCEL)
+// O MOTOR DA ABA DADOS
 // =========================================================
 
-// 1. Puxar todos os dados do Firebase
 window.carregarHistoricoNuvem = async function() {
     const container = document.getElementById('accordion-container');
     container.innerHTML = `<div style="text-align:center; padding:20px; color:#64748b;"><i class="fa-solid fa-spinner fa-spin"></i> Montando Histórico...</div>`;
@@ -192,9 +191,7 @@ window.carregarHistoricoNuvem = async function() {
             });
         });
 
-        // Ordenar do mais recente para o mais antigo
         historicoCompleto.sort((a, b) => new Date(b.atualizado) - new Date(a.atualizado));
-
         renderizarSanfona(''); 
     } catch (error) {
         console.error("Erro ao puxar histórico:", error);
@@ -202,13 +199,11 @@ window.carregarHistoricoNuvem = async function() {
     }
 }
 
-// 2. Filtro de digitação
 window.filtrarSanfona = function() {
     const termo = document.getElementById('input-busca').value;
     renderizarSanfona(termo);
 }
 
-// 3. Construtor HTML da Sanfona
 function renderizarSanfona(termoBusca) {
     const container = document.getElementById('accordion-container');
     container.innerHTML = '';
@@ -240,11 +235,11 @@ function renderizarSanfona(termoBusca) {
     });
 }
 
-// 4. Transformar Dados em Tabela Estilo Excel (Substitui os antigos Cards)
 function gerarHTMLCardsResponsivos(dadosDaSemana) {
     let totaisDias = [0, 0, 0, 0, 0];
     let totalGeralSemana = 0;
 
+    // Cabeçalho atualizado com os dias corretos
     let html = `
     <div class="hist-table-wrapper">
         <table class="hist-table">
@@ -252,7 +247,7 @@ function gerarHTMLCardsResponsivos(dadosDaSemana) {
                 <tr>
                     <th>Área</th>
                     <th>Turno</th>
-                    <th>S</th><th>T</th><th>Q</th><th>Q</th><th>S</th>
+                    <th>seg</th><th>ter</th><th>qua</th><th>qui</th><th>sex</th>
                     <th>Total</th>
                 </tr>
             </thead>
@@ -278,8 +273,9 @@ function gerarHTMLCardsResponsivos(dadosDaSemana) {
             html += `<td rowspan="2" class="td-area-hist">${linha.area}</td>`;
         }
         
+        // Exibição do turno com "T"
         html += `
-            <td class="td-turno-hist">${linha.turno}</td>
+            <td class="td-turno-hist">${linha.turno} T</td>
             ${colunasDias}
             <td class="td-total-hist">${somaLinha}</td>
         </tr>`;
@@ -305,7 +301,7 @@ function gerarHTMLCardsResponsivos(dadosDaSemana) {
 }
 
 // =========================================================
-// EXPORTAÇÃO MESTRE (TODO O HISTÓRICO EMPILHADO NO EXCEL)
+// EXPORTAÇÃO MESTRE NO EXCEL
 // =========================================================
 window.gerarExcelMestre = async function() {
     const termo = document.getElementById('input-busca').value;
@@ -335,7 +331,8 @@ window.gerarExcelMestre = async function() {
         filtrados.forEach((item) => {
             
             const cabecalho = worksheet.getRow(linhaInicial);
-            cabecalho.values = ['Semana', 'Área', 'Turno', 'S', 'T', 'Q', 'Q', 'S', 'Total'];
+            // Cabeçalho do Excel atualizado
+            cabecalho.values = ['Semana', 'Área', 'Turno', 'seg', 'ter', 'qua', 'qui', 'sex', 'Total'];
             cabecalho.font = { bold: true }; 
             cabecalho.alignment = { vertical: 'middle', horizontal: 'center' };
 
@@ -343,7 +340,8 @@ window.gerarExcelMestre = async function() {
                 const rIndex = linhaInicial + 1 + i; 
                 const row = worksheet.getRow(rIndex);
                 
-                row.getCell('C').value = linhaData.turno;
+                // Exibição do turno com "T" no Excel
+                row.getCell('C').value = linhaData.turno + ' T';
                 
                 row.getCell('D').value = linhaData.dias[0] === "" ? null : linhaData.dias[0]; 
                 row.getCell('E').value = linhaData.dias[1] === "" ? null : linhaData.dias[1]; 
