@@ -433,3 +433,62 @@ const inputData = document.getElementById('input-data');
 const hoje = new Date();
 inputData.value = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')}`;
 processarDataCalendario();
+
+// =========================================================
+// --- MOTOR DE LEITURA INTELIGENTE (WHATSAPP) ---
+// =========================================================
+window.lerMensagemWhatsApp = function() {
+    const texto = document.getElementById('texto-whatsapp').value;
+    
+    if (!texto || texto.trim() === '') {
+        alert("⚠️ Por favor, cole a mensagem padrão do supervisor na caixa de texto primeiro.");
+        return;
+    }
+
+    // 1. Identifica o Turno de forma flexível (ignora maiúsculas/minúsculas)
+    const turnoMatch = texto.match(/(1|2)º\s*turno/i);
+    const turno = turnoMatch ? turnoMatch[1] : null;
+
+    if (!turno) {
+        alert("❌ Erro de Leitura: Não consegui identificar '1º turno' ou '2º turno' no cabeçalho da mensagem.\nVerifique se copiou a mensagem inteira.");
+        return;
+    }
+
+    // 2. Extração via Regex (O robô ignora os emojis automaticamente!)
+    // A expressão /\s*(\d+)/ caça qualquer número que apareça logo após os dois pontos.
+    const fabricacaoMatch = texto.match(/Fabricação:\s*(\d+)/i);
+    const estruturalMatch = texto.match(/Estrutural:\s*(\d+)/i);
+    const montagemMatch = texto.match(/Montagem Final:\s*(\d+)/i);
+    
+    // Suporte flexível para a palavra "Painéis" (com ou sem acento)
+    const paineisMatch = texto.match(/Pain[eé]is:\s*(\d+)/i);
+
+    // 3. Organiza os dados limpos (se não achar uma área, preenche com "0" por segurança)
+    const dadosLidos = {
+        fabricacao: fabricacaoMatch ? fabricacaoMatch[1] : "0",
+        estrutural: estruturalMatch ? estruturalMatch[1] : "0",
+        montagem: montagemMatch ? montagemMatch[1] : "0",
+        paineis: paineisMatch ? paineisMatch[1] : "0"
+    };
+
+    // 4. Teste Visual para o Analista
+    alert(
+        `✅ Leitura Concluída com Sucesso!\n\n` +
+        `Turno Detectado: ${turno}º Turno\n` +
+        `--------------------------\n` +
+        `P3 - Fabricação: ${dadosLidos.fabricacao}\n` +
+        `P3 - Estrutural: ${dadosLidos.estrutural}\n` +
+        `P4 - Montagem Final: ${dadosLidos.montagem}\n` +
+        `P4 - Painéis: ${dadosLidos.paineis}\n\n` +
+        `A automação identificou os números corretamente?`
+    );
+
+    // Limpa a caixa de leitura para não poluir a tela
+    document.getElementById('texto-whatsapp').value = '';
+
+    /* A INTEGRAÇÃO COM A PLANILHA ACONTECE AQUI NO FUTURO.
+       Nós vamos substituir esse "alert" acima pelas linhas de código
+       que pegam a variável 'dadosLidos.fabricacao' e jogam no input
+       específico da sua tela!
+    */
+};
