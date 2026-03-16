@@ -19,18 +19,16 @@
 
   <div class="card">
       <h1>🧹 Limpeza Geral</h1>
-      <p>Esta ferramenta vai varrer o Firestore e deletar permanentemente todas as semanas de teste registradas.</p>
+      <p>Esta ferramenta vai varrer o Firestore e deletar permanentemente todas as semanas salvas na coleção "contador_de_presenca".</p>
       
       <button id="btn-limpar">Apagar Todos os Dados Agora</button>
       <div id="status"></div>
   </div>
 
   <script type="module">
-    // Importa o Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-    // Suas credenciais
     const firebaseConfig = {
       apiKey: "AIzaSyAZsg2GbxrgX70VZwPHiXkoFMCTt7i3_6U",
       authDomain: "indicador-de-presenca-modular.firebaseapp.com",
@@ -43,40 +41,39 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    // NOME DA NOVA COLEÇÃO
+    const COLECAO_BD = "contador_de_presenca";
+
     document.getElementById('btn-limpar').addEventListener('click', async () => {
         const status = document.getElementById('status');
         const btn = document.getElementById('btn-limpar');
         
-        // Trava de segurança
-        if(!confirm("ALERTA: Tem certeza absoluta? Isso vai zerar o banco de dados e não pode ser desfeito.")) return;
+        if(!confirm(`ALERTA: Tem certeza absoluta? Isso vai zerar a coleção "${COLECAO_BD}" e não pode ser desfeito.`)) return;
         
         btn.disabled = true;
         status.style.color = "#1e3a8a";
         status.innerText = "Conectando ao banco...";
         
         try {
-            // 1. Puxa todos os documentos da coleção
-            const querySnapshot = await getDocs(collection(db, "faltas_producao"));
+            const querySnapshot = await getDocs(collection(db, COLECAO_BD));
             let contagem = 0;
             const total = querySnapshot.size;
 
             if(total === 0) {
                 status.style.color = "#16a34a";
-                status.innerText = "O banco já está vazio!";
+                status.innerText = "A coleção já está vazia (ou ainda não foi criada)!";
                 btn.disabled = false;
                 return;
             }
             
-            // 2. Faz um loop e deleta um por um
             for (const documento of querySnapshot.docs) {
-                await deleteDoc(doc(db, "faltas_producao", documento.id));
+                await deleteDoc(doc(db, COLECAO_BD, documento.id));
                 contagem++;
                 status.innerText = `Limpando... (${contagem} de ${total})`;
             }
             
-            // 3. Finaliza
             status.style.color = "#16a34a";
-            status.innerText = `✨ Sucesso! ${contagem} registros de teste foram apagados. O sistema está virgem!`;
+            status.innerText = `✨ Sucesso! ${contagem} registros foram apagados.`;
             
         } catch (error) {
             console.error(error);
