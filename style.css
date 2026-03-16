@@ -14,21 +14,50 @@
 
 /* --- RESET GLOBAL --- */
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-smoothing: antialiased; }
+body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-smoothing: antialiased; display: flex; flex-direction: column; min-height: 100vh; }
 
-/* --- HEADER (CABEÇALHO DO SISTEMA) --- */
-.sys-header {
-    background-color: var(--primary);
-    color: white;
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+/* ========================================================= */
+/* --- NOVOS CABEÇALHO E RODAPÉ FOTOGRÁFICOS (BANNERS) --- */
+/* ========================================================= */
+
+/* --- CONTAINER DO TOPO --- */
+.sys-header-banner {
+    width: 100%;
+    background-color: #000; /* Fundo preto caso a imagem demore a carregar */
+    overflow: hidden;
+    line-height: 0; /* Remove espaços em branco indesejados abaixo da imagem */
 }
-.sys-header h1 { font-size: 18px; font-weight: 600; letter-spacing: 0.5px; }
+
+/* --- IMAGEM DO TOPO --- */
+.banner-img-top {
+    width: 100%;
+    height: auto; /* Mantém a proporção original da foto */
+    max-height: 25vh; /* Limita a altura a 25% da altura da tela do celular para não ocupar espaço demais */
+    object-fit: cover; /* Faz a imagem preencher o espaço, cortando as laterais se necessário, sem amassar */
+    object-position: center; /* Garante que o centro da foto (a logo) fique sempre visível */
+}
+
+/* --- CONTAINER DO RODAPÉ --- */
+.sys-footer-banner {
+    width: 100%;
+    background-color: #000;
+    overflow: hidden;
+    line-height: 0;
+    margin-top: auto; /* Empurra o rodapé para o final da página se houver pouco conteúdo */
+}
+
+/* --- IMAGEM DO RODAPÉ --- */
+.banner-img-bottom {
+    width: 100%;
+    height: auto;
+    max-height: 20vh; /* Rodapé um pouco menor que o cabeçalho */
+    object-fit: cover;
+    object-position: center;
+}
+
+/* ========================================================= */
+/* --- RESTANTE DO ESTILO DO SISTEMA --- */
+/* ========================================================= */
 
 /* --- NAVEGAÇÃO (ABAS MODERNAS ESTILO APP) --- */
 .nav-tabs {
@@ -70,7 +99,7 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 }
 
 /* --- CONTAINER PRINCIPAL --- */
-.main-content { max-width: 800px; margin: 0 auto; padding: 20px 15px 60px; }
+.main-content { max-width: 800px; margin: 0 auto; padding: 20px 15px 40px; flex: 1; }
 .tab-pane { display: none; animation: fadeIn 0.3s ease; }
 .tab-pane.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
@@ -154,7 +183,7 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 
 
 /* ========================================================= */
-/* --- NOVO VISUAL DA ABA DADOS (PESQUISA, SANFONA E TABELA) --- */
+/* --- ABA DADOS (PESQUISA, SANFONA E TABELA EXCEL) --- */
 /* ========================================================= */
 
 /* --- BARRA DE PESQUISA --- */
