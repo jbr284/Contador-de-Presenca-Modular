@@ -2,7 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-// CHAVES DO PROJETO "INDICADOR DE PRESENÇA MODULAR"
+// CHAVES DO PROJETO
 const firebaseConfig = {
   apiKey: "AIzaSyAZsg2GbxrgX70VZwPHiXkoFMCTt7i3_6U",
   authDomain: "indicador-de-presenca-modular.firebaseapp.com",
@@ -20,6 +20,9 @@ let textoVerticalCalculado = "";
 let chaveBancoAtual = ""; 
 let dadosAtuais = []; 
 let historicoCompleto = []; 
+
+// NOME DA NOVA COLEÇÃO NO BANCO DE DADOS
+const COLECAO_BD = "contador_de_presenca";
 
 // Retorna a matriz limpa
 function getEstruturaZerada() {
@@ -80,7 +83,7 @@ window.processarDataCalendario = async function() {
     displaySemana.innerHTML = `<i class="fa-solid fa-spinner fa-spin" style="margin-right:8px;"></i> Buscando na nuvem...`;
     
     try {
-        const docRef = doc(db, "faltas_producao", chaveBancoAtual);
+        const docRef = doc(db, COLECAO_BD, chaveBancoAtual);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
@@ -113,7 +116,6 @@ function renderizarFormularioLote() {
             const indexBD = dadosAtuais.findIndex(d => d.area === nomeArea && d.turno === nomeTurno);
             const valores = dadosAtuais[indexBD].dias;
             
-            // Aqui adicionamos o "T" no turno e os rótulos de seg, ter, qua...
             htmlInterno += `
             <div class="shift-row">
                 <div class="shift-label">${nomeTurno} T</div>
@@ -146,7 +148,7 @@ window.salvarTodosOsDados = async function() {
     });
 
     try {
-        await setDoc(doc(db, "faltas_producao", chaveBancoAtual), {
+        await setDoc(doc(db, COLECAO_BD, chaveBancoAtual), {
             dados: dadosAtuais,
             ultimaAtualizacao: new Date().toISOString()
         });
@@ -180,7 +182,7 @@ window.carregarHistoricoNuvem = async function() {
     container.innerHTML = `<div style="text-align:center; padding:20px; color:#64748b;"><i class="fa-solid fa-spinner fa-spin"></i> Montando Histórico...</div>`;
     
     try {
-        const querySnapshot = await getDocs(collection(db, "faltas_producao"));
+        const querySnapshot = await getDocs(collection(db, COLECAO_BD));
         historicoCompleto = [];
         
         querySnapshot.forEach((doc) => {
@@ -239,7 +241,6 @@ function gerarHTMLCardsResponsivos(dadosDaSemana) {
     let totaisDias = [0, 0, 0, 0, 0];
     let totalGeralSemana = 0;
 
-    // Cabeçalho atualizado com os dias corretos
     let html = `
     <div class="hist-table-wrapper">
         <table class="hist-table">
@@ -273,7 +274,6 @@ function gerarHTMLCardsResponsivos(dadosDaSemana) {
             html += `<td rowspan="2" class="td-area-hist">${linha.area}</td>`;
         }
         
-        // Exibição do turno com "T"
         html += `
             <td class="td-turno-hist">${linha.turno} T</td>
             ${colunasDias}
@@ -331,7 +331,6 @@ window.gerarExcelMestre = async function() {
         filtrados.forEach((item) => {
             
             const cabecalho = worksheet.getRow(linhaInicial);
-            // Cabeçalho do Excel atualizado
             cabecalho.values = ['Semana', 'Área', 'Turno', 'seg', 'ter', 'qua', 'qui', 'sex', 'Total'];
             cabecalho.font = { bold: true }; 
             cabecalho.alignment = { vertical: 'middle', horizontal: 'center' };
@@ -340,7 +339,6 @@ window.gerarExcelMestre = async function() {
                 const rIndex = linhaInicial + 1 + i; 
                 const row = worksheet.getRow(rIndex);
                 
-                // Exibição do turno com "T" no Excel
                 row.getCell('C').value = linhaData.turno + ' T';
                 
                 row.getCell('D').value = linhaData.dias[0] === "" ? null : linhaData.dias[0]; 
