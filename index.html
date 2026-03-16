@@ -40,10 +40,17 @@
                   <i class="fa-brands fa-whatsapp"></i> Leitura Inteligente do Apontamento
               </div>
               <div class="input-group">
-                  <textarea id="texto-whatsapp" class="sys-input input-whatsapp" placeholder="Cole aqui a mensagem do supervisor (exatamente como veio do WhatsApp)..."></textarea>
+                  <select id="dia-whatsapp" class="sys-input" style="margin-bottom: 10px; border-color: #bbf7d0; cursor: pointer;">
+                      <option value="seg">Preencher na Segunda-feira</option>
+                      <option value="ter">Preencher na Terça-feira</option>
+                      <option value="qua">Preencher na Quarta-feira</option>
+                      <option value="qui">Preencher na Quinta-feira</option>
+                      <option value="sex">Preencher na Sexta-feira</option>
+                  </select>
+                  <textarea id="texto-whatsapp" class="sys-input input-whatsapp" placeholder="Cole a mensagem do supervisor aqui..."></textarea>
               </div>
               <button class="sys-btn btn-whatsapp" onclick="lerMensagemWhatsApp()">
-                  <i class="fa-solid fa-wand-magic-sparkles"></i> Processar Dados Automáticos
+                  <i class="fa-solid fa-wand-magic-sparkles"></i> Processar e Preencher Tabela
               </button>
           </div>
 
@@ -72,7 +79,7 @@
               
               <div class="search-bar">
                   <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                  <input type="text" id="input-busca" class="sys-input" placeholder="Buscar semana (Ex: fev, mar...)" oninput="filtrarSanfona()">
+                  <input type="text" id="input-busca" class="sys-input" placeholder="Buscar semana (Ex: fev, mar...)" oninput="filtrarSanfona()" style="padding-left: 40px;">
               </div>
 
               <div id="accordion-container" class="accordion-wrapper">
@@ -102,11 +109,7 @@
   <script type="module" src="app.js"></script>
 
   <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js');
-      });
-    }
+    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); }); }
   </script>
 </body>
 </html>
