@@ -1,6 +1,6 @@
 {
   "name": "Contador de Presença",
-  "short_name": "Presença",
+  "short_name": "Contador de Presença",
   "description": "Sistema de apontamento de faltas e geração de relatórios da produção.",
   "start_url": "./index.html",
   "display": "standalone",
