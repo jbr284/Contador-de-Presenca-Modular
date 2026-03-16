@@ -1,4 +1,6 @@
-/* --- VARIÁVEIS DO SISTEMA --- */
+/* ========================================================= */
+/* --- VARIÁVEIS E RESET GLOBAL --- */
+/* ========================================================= */
 :root {
     --primary: #1e3a8a; 
     --primary-hover: #1e40af;
@@ -12,148 +14,77 @@
     --excel-header: #dcfce7;
 }
 
-/* --- RESET GLOBAL --- */
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
 body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-smoothing: antialiased; display: flex; flex-direction: column; min-height: 100vh; }
 
 /* ========================================================= */
-/* --- NOVOS CABEÇALHO E RODAPÉ FOTOGRÁFICOS FIXOS --- */
+/* --- BANNERS FIXOS (TOPO E RODAPÉ) --- */
 /* ========================================================= */
-
 .sys-header-banner {
-    width: 100%;
-    background-color: #000; 
-    overflow: hidden;
-    line-height: 0;
-    position: sticky; 
-    top: 0;
-    z-index: 100; 
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
+    width: 100%; background-color: #000; overflow: hidden; line-height: 0;
+    position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
 }
-
-.banner-img-top {
-    width: 100%;
-    height: auto; 
-    max-height: 15vh; 
-    object-fit: cover; 
-    object-position: center; 
-}
+.banner-img-top { width: 100%; height: auto; max-height: 15vh; object-fit: cover; object-position: center; }
 
 .sys-footer-banner {
-    width: 100%;
-    background-color: #000;
-    overflow: hidden;
-    line-height: 0;
-    margin-top: auto; 
-    position: sticky; 
-    bottom: 0;
-    z-index: 100;
-    box-shadow: 0 -4px 10px rgba(0,0,0,0.3); 
+    width: 100%; background-color: #000; overflow: hidden; line-height: 0;
+    margin-top: auto; position: sticky; bottom: 0; z-index: 100; box-shadow: 0 -4px 10px rgba(0,0,0,0.3); 
 }
-
-.banner-img-bottom {
-    width: 100%;
-    height: auto;
-    max-height: 12vh; 
-    object-fit: cover;
-    object-position: center;
-}
+.banner-img-bottom { width: 100%; height: auto; max-height: 12vh; object-fit: cover; object-position: center; }
 
 /* ========================================================= */
-/* --- RESTANTE DO ESTILO DO SISTEMA --- */
+/* --- ESTRUTURA PRINCIPAL --- */
 /* ========================================================= */
-
 .nav-tabs {
-    display: flex;
-    background: #e2e8f0; 
-    padding: 6px;
-    margin: 20px 15px 0; 
-    border-radius: 12px;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06); 
-    /* AQUI: Largura expandida para usar melhor a tela do PC */
-    max-width: 1200px; 
+    display: flex; background: #e2e8f0; padding: 6px; margin: 20px auto 0; 
+    border-radius: 12px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.06); 
+    max-width: 1100px; width: calc(100% - 20px);
 }
-
-@media (min-width: 1250px) {
-    .nav-tabs { margin: 20px auto 0; }
-}
-
 .nav-tab {
-    flex: 1;
-    text-align: center;
-    padding: 12px 10px;
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--text-muted);
-    cursor: pointer;
-    border-radius: 8px; 
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px; 
+    flex: 1; text-align: center; padding: 12px 10px; font-size: 14px; font-weight: 700;
+    color: var(--text-muted); cursor: pointer; border-radius: 8px; transition: all 0.3s ease; 
+    display: flex; align-items: center; justify-content: center; gap: 8px; 
 }
-
 .nav-tab:hover { color: var(--primary); }
+.nav-tab.active { color: var(--primary); background-color: var(--card-bg); box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
 
-.nav-tab.active {
-    color: var(--primary);
-    background-color: var(--card-bg); 
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1); 
-}
-
-/* AQUI: Largura expandida de 800px para 1200px no conteúdo principal */
-.main-content { max-width: 1200px; margin: 0 auto; padding: 20px 15px 100px; flex: 1; }
+.main-content { max-width: 1100px; margin: 0 auto; padding: 20px 10px 100px; flex: 1; width: 100%; }
 .tab-pane { display: none; animation: fadeIn 0.3s ease; }
 .tab-pane.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
 .sys-card {
-    background: var(--card-bg);
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    background: var(--card-bg); border-radius: 10px; border: 1px solid var(--border);
+    padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
-
 .sys-card-title {
-    font-size: 13px;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    font-weight: 700;
-    margin-bottom: 15px;
-    letter-spacing: 0.5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    font-size: 13px; text-transform: uppercase; color: var(--text-muted); font-weight: 700;
+    margin-bottom: 15px; letter-spacing: 0.5px; display: flex; justify-content: space-between; align-items: center;
 }
 
+/* ========================================================= */
+/* --- INPUTS E FORMULÁRIOS (ABA LANÇAMENTOS) --- */
+/* ========================================================= */
 .input-group { margin-bottom: 15px; }
 .input-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
 .sys-input {
     width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 6px;
     font-size: 15px; color: var(--text-main); transition: 0.2s; background-color: #f8fafc;
 }
-.sys-input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); background-color: #fff; }
+.sys-input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); background-color: #fff; }
 
 .date-display {
-    text-align: center; margin-top: 10px; padding: 12px;
-    background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px;
-    color: #1e40af; font-size: 16px; font-weight: bold;
+    text-align: center; margin-top: 10px; padding: 12px; background: #eff6ff; 
+    border: 1px solid #bfdbfe; border-radius: 6px; color: #1e40af; font-size: 16px; font-weight: bold;
 }
 
-.factory-area-card {
-    background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
-    margin-bottom: 16px; overflow: hidden;
-}
+.factory-area-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 16px; overflow: hidden; }
 .factory-area-header {
     background: #f8fafc; padding: 12px 16px; font-weight: 700; color: var(--text-main);
     border-bottom: 1px solid var(--border); display: flex; align-items: center;
 }
 .factory-area-header::before {
-    content: ''; display: inline-block; width: 8px; height: 8px;
-    background-color: var(--primary); border-radius: 50%; margin-right: 10px;
+    content: ''; display: inline-block; width: 8px; height: 8px; background-color: var(--primary); border-radius: 50%; margin-right: 10px;
 }
 .shift-row { display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px dashed var(--border); }
 .shift-row:last-child { border-bottom: none; }
@@ -163,46 +94,37 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 .day-cell label { display: block; font-size: 11px; font-weight: 700; color: #94a3b8; margin-bottom: 4px; text-transform: lowercase; }
 .day-cell input {
     width: 100%; padding: 10px 0; text-align: center; border: 1px solid var(--border);
-    border-radius: 6px; font-size: 16px; font-weight: 700; color: var(--primary);
-    background-color: #f8fafc; transition: all 0.2s ease;
+    border-radius: 6px; font-size: 16px; font-weight: 700; color: var(--primary); background-color: #f8fafc; transition: all 0.2s ease;
 }
 .day-cell input:focus { border-color: var(--accent); background-color: #fff; box-shadow: 0 2px 4px rgba(59,130,246,0.1); transform: scale(1.05); }
 
 .sys-btn {
-    width: 100%; padding: 14px; border: none; border-radius: 8px;
-    font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; 
+    cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 .btn-primary { background-color: var(--primary); color: white; }
 .btn-primary:hover { background-color: var(--primary-hover); }
-.btn-primary:active { transform: scale(0.98); }
-
-.btn-excel { background-color: var(--success); color: white; margin-top: 20px; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2); }
+.btn-excel { background-color: var(--success); color: white; margin-top: 20px; box-shadow: 0 4px 12px rgba(22,163,74,0.2); }
 .btn-excel:hover { background-color: #15803d; }
-.btn-excel:active { transform: scale(0.98); }
 
 /* ========================================================= */
-/* --- ABA DADOS --- */
+/* --- ABA DADOS (PESQUISA, SANFONA E TABELA) --- */
 /* ========================================================= */
-
 .search-bar { position: relative; margin-bottom: 20px; }
 .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
 .search-bar input {
     width: 100%; padding: 12px 12px 12px 40px; border: 1px solid var(--border);
-    border-radius: 8px; font-size: 15px; color: var(--text-main); background-color: #f8fafc; transition: 0.2s;
+    border-radius: 8px; font-size: 15px; color: var(--text-main); background-color: #f8fafc;
 }
-.search-bar input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1); background-color: #fff; }
 
 .accordion-wrapper { display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px; }
 .acc-item { border: 1px solid var(--border); border-radius: 8px; background: #fff; overflow: hidden; }
 .acc-header {
     padding: 15px; background: #f8fafc; font-weight: 700; color: var(--primary);
-    display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: background 0.2s;
+    display: flex; justify-content: space-between; align-items: center; cursor: pointer;
 }
-.acc-header:hover { background: #f1f5f9; }
 .acc-icon { transition: transform 0.3s ease; }
 .acc-item.active .acc-icon { transform: rotate(180deg); }
-
 .acc-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background: #fff; }
 .acc-item.active .acc-content { max-height: 2000px; padding: 15px; border-top: 1px solid var(--border); }
 
@@ -216,48 +138,42 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 .row-total-hist td { background-color: var(--excel-header); font-weight: 700; color: var(--primary); border-top: 2px solid #22c55e !important; }
 
 /* ========================================================= */
-/* --- MÁGICA DE REDUÇÃO AGRESSIVA PARA CELULARES --- */
+/* --- 📱 MODO CELULAR (Telas pequenas) --- */
 /* ========================================================= */
 @media (max-width: 600px) {
-    /* 1. Mata a margem lateral da tela inteira */
-    .main-content { padding: 15px 0px 120px; } 
-
-    /* Mantém as abas superiores com respiro */
-    .nav-tabs { margin: 15px 10px 0; }
-
-    /* 2. Mantém o formulário de Lançamentos em uma caixa bonitinha */
-    #aba-registro .sys-card { padding: 15px 10px; }
-
-    /* 3. A MÁGICA NA ABA DADOS: Remove a caixa branca por fora da sanfona */
-    #aba-dados .sys-card { 
-        padding: 10px 0px; 
-        border: none; 
-        background: transparent; 
-        box-shadow: none; 
-    }
-
-    /* Adiciona respiro apenas nos elementos soltos para não grudarem no vidro */
-    #aba-dados .sys-card-title,
-    #aba-dados .search-bar,
-    #aba-dados .btn-excel {
-        padding: 0 10px;
-    }
-
-    /* 4. A sanfona agora estica 100% de ponta a ponta */
-    .acc-item { 
-        border-left: none; 
-        border-right: none; 
-        border-radius: 0; 
-        margin-bottom: 8px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    .acc-header { padding: 12px 10px; }
+    /* Devolve a margem de segurança de 10px para as abas e fundo */
+    .nav-tabs { width: calc(100% - 20px); margin: 15px auto 0; }
+    .main-content { padding: 15px 10px 120px; }
     
-    /* 5. Tabela com espaço máximo e respiro interno devolvido */
-    .acc-item.active .acc-content { padding: 12px 4px; } 
-    .hist-table { font-size: 11.5px; } 
-    .hist-table th, .hist-table td { padding: 8px 2px; }
+    /* Protege o formulário de Lançamentos de encostar na borda */
+    .sys-card { padding: 15px 10px; }
+    .shift-row { padding: 12px 8px; }
+    
+    /* 🚀 A MÁGICA DA TABELA DE DADOS: Zera espaços internos para a tabela colar nas paredes */
+    .acc-header { padding: 12px 10px; font-size: 13px; }
+    .acc-item.active .acc-content { padding: 0 !important; } /* Tira a margem interna da sanfona */
+    
+    .hist-table { font-size: 11.5px; border-left: none; border-right: none; }
+    .hist-table th, .hist-table td { padding: 8px 3px; }
     .hist-table th { font-size: 10px; padding: 6px 1px; }
-    .td-area-hist { font-size: 11.5px; padding-left: 5px !important; }
-    .row-total-hist td { font-size: 11.5px; padding: 10px 2px !important; }
+    .td-area-hist { font-size: 11.5px; padding-left: 6px !important; }
+    .row-total-hist td { font-size: 11.5px; padding: 10px 3px !important; }
+}
+
+/* ========================================================= */
+/* --- 💻 MODO DESKTOP (Telas grandes / Monitores) --- */
+/* ========================================================= */
+@media (min-width: 800px) {
+    /* Expande os cartões e a tabela para usar o monitor inteiro */
+    .sys-card { padding: 30px; }
+    
+    .acc-header { font-size: 16px; padding: 20px; }
+    .search-bar input { font-size: 16px; padding: 16px 16px 16px 50px; }
+    
+    .hist-table { font-size: 15px; }
+    .hist-table th { font-size: 13px; padding: 14px 10px; }
+    .hist-table td { padding: 14px 10px; }
+    .td-area-hist { font-size: 15px; padding-left: 20px !important; }
+    .td-turno-hist { font-size: 14px; }
+    .row-total-hist td { font-size: 15px; padding: 16px 10px !important; }
 }
