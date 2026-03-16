@@ -21,38 +21,33 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 /* --- CABEÇALHO E RODAPÉ FIXOS (DESIGN RESPONSIVO) --- */
 /* ========================================================= */
 
-/* --- CONTAINER DO TOPO (FIXO) --- */
 .sys-header-banner {
     width: 100%;
     background-color: #000; 
     overflow: hidden;
-    line-height: 0;
     position: sticky; 
     top: 0;
     z-index: 100; 
     box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
 }
 
-/* --- Imagem fotográfica (que aparece apenas no celular) --- */
 .banner-img-top {
     width: 100%;
     height: auto; 
-    max-height: 15vh; /* Altura de respiro no celular */
+    max-height: 15vh; 
     object-fit: cover; 
     object-position: center; 
+    display: block;
 }
 
-/* --- Design limpo do cabeçalho (que aparece apenas no PC) --- */
 .header-desktop-content {
-    display: none; /* Escondido por padrão (no celular) */
+    display: none; 
 }
 
-/* --- RODAPÉ (BANNER FIXO) --- */
 .sys-footer-banner {
     width: 100%;
     background-color: #000;
-    overflow: hidden;
-    line-height: 0;
+    text-align: center;
     margin-top: auto; 
     position: sticky; 
     bottom: 0;
@@ -66,6 +61,17 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
     max-height: 12vh; 
     object-fit: cover;
     object-position: center;
+    display: block;
+}
+
+.footer-war-cry {
+    padding: 10px 0 15px; 
+    font-size: 11px;
+    font-weight: 800; 
+    color: #ffffff;
+    letter-spacing: 1.5px;
+    line-height: 1.5;
+    text-transform: uppercase;
 }
 
 /* ========================================================= */
@@ -104,39 +110,26 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 }
 
 .nav-tab:hover { color: var(--primary); }
-
 .nav-tab.active {
     color: var(--primary);
     background-color: var(--card-bg); 
     box-shadow: 0 2px 6px rgba(0,0,0,0.1); 
 }
 
-/* CONTAINER PRINCIPAL: Garante que os botões do final pulem o banner do rodapé */
-.main-content { max-width: 1100px; margin: 0 auto; padding: 20px 15px 120px; flex: 1; width: 100%; }
+.main-content { max-width: 1100px; margin: 0 auto; padding: 20px 15px 140px; flex: 1; width: 100%; }
 .tab-pane { display: none; animation: fadeIn 0.3s ease; }
 .tab-pane.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-/* COMPONENTES (CARDS BRANCOS) */
 .sys-card {
-    background: var(--card-bg);
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    background: var(--card-bg); border-radius: 10px; border: 1px solid var(--border);
+    padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .sys-card-title {
-    font-size: 13px;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    font-weight: 700;
-    margin-bottom: 15px;
-    letter-spacing: 0.5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    font-size: 13px; text-transform: uppercase; color: var(--text-muted);
+    font-weight: 700; margin-bottom: 15px; letter-spacing: 0.5px;
+    display: flex; justify-content: space-between; align-items: center;
 }
 
 /* ========================================================= */
@@ -152,23 +145,13 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 .sys-input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); background-color: #fff; }
 
 .date-display {
-    text-align: center; margin-top: 10px; padding: 12px;
-    background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px;
-    color: #1e40af; font-size: 16px; font-weight: bold;
+    text-align: center; margin-top: 10px; padding: 12px; background: #eff6ff; 
+    border: 1px solid #bfdbfe; border-radius: 6px; color: #1e40af; font-size: 16px; font-weight: bold;
 }
 
-.factory-area-card {
-    background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
-    margin-bottom: 16px; overflow: hidden;
-}
-.factory-area-header {
-    background: #f8fafc; padding: 12px 16px; font-weight: 700; color: var(--text-main);
-    border-bottom: 1px solid var(--border); display: flex; align-items: center;
-}
-.factory-area-header::before {
-    content: ''; display: inline-block; width: 8px; height: 8px;
-    background-color: var(--primary); border-radius: 50%; margin-right: 10px;
-}
+.factory-area-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 16px; overflow: hidden; }
+.factory-area-header { background: #f8fafc; padding: 12px 16px; font-weight: 700; color: var(--text-main); border-bottom: 1px solid var(--border); display: flex; align-items: center; }
+.factory-area-header::before { content: ''; display: inline-block; width: 8px; height: 8px; background-color: var(--primary); border-radius: 50%; margin-right: 10px; }
 .shift-row { display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px dashed var(--border); }
 .shift-row:last-child { border-bottom: none; }
 .shift-label { width: 55px; font-size: 14px; font-weight: 700; color: var(--text-muted); }
@@ -177,15 +160,13 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 .day-cell label { display: block; font-size: 11px; font-weight: 700; color: #94a3b8; margin-bottom: 4px; text-transform: lowercase; }
 .day-cell input {
     width: 100%; padding: 10px 0; text-align: center; border: 1px solid var(--border);
-    border-radius: 6px; font-size: 16px; font-weight: 700; color: var(--primary);
-    background-color: #f8fafc; transition: all 0.2s ease;
+    border-radius: 6px; font-size: 16px; font-weight: 700; color: var(--primary); background-color: #f8fafc; transition: all 0.2s ease;
 }
 .day-cell input:focus { border-color: var(--accent); background-color: #fff; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1); transform: scale(1.05); }
 
 .sys-btn {
-    width: 100%; padding: 14px; border: none; border-radius: 8px;
-    font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; 
+    cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 .btn-primary { background-color: var(--primary); color: white; }
 .btn-primary:hover { background-color: var(--primary-hover); }
@@ -229,17 +210,14 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 /* --- 📱 MODO CELULAR (Telas pequenas) --- */
 /* ========================================================= */
 @media (max-width: 600px) {
-    /* Devolve a margem de segurança de 10px para as abas e fundo */
     .nav-tabs { width: calc(100% - 20px); margin: 15px auto 0; }
-    .main-content { padding: 15px 10px 120px; }
+    .main-content { padding: 15px 10px 140px; }
     
-    /* Protege o formulário de Lançamentos de encostar na borda */
     .sys-card { padding: 15px 10px; }
     .shift-row { padding: 12px 8px; }
     
-    /* 🚀 A MÁGICA DA TABELA DE DADOS: Zera espaços internos para a tabela colar nas paredes */
     .acc-header { padding: 12px 10px; font-size: 13px; }
-    .acc-item.active .acc-content { padding: 0 !important; } /* Tira a margem interna da sanfona */
+    .acc-item.active .acc-content { padding: 0 !important; } 
     
     .hist-table { font-size: 11.5px; border-left: none; border-right: none; }
     .hist-table th, .hist-table td { padding: 8px 3px; }
@@ -252,27 +230,26 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 /* --- 💻 MODO DESKTOP (Telas grandes / Monitores) --- */
 /* ========================================================= */
 @media (min-width: 800px) {
-    /* 1. Executa a troca de design do TOPO (Mata a foto, mostra design limpo) */
+    /* Troca de design do TOPO (Mata a foto, mostra design corporativo) */
     .sys-header-banner { background-color: var(--primary); box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
     .banner-img-top { display: none !important; } 
 
     .header-desktop-content {
         display: flex; align-items: center; padding: 15px 30px; height: 70px; gap: 15px; max-width: 1100px; margin: 0 auto;
     }
-    .logo-desktop { height: 40px; }
+    .logo-desktop { height: 40px; width: auto; }
     .app-title-desktop { color: white; font-size: 20px; font-weight: 600; letter-spacing: 0.5px; }
 
-    /* 2. MANTÉM O RODAPÉ NO COMPUTADOR */
-    .sys-footer-banner { display: block; } /* Garante que o rodapé apareça */
-    .banner-img-bottom { max-height: 150px; } /* Limita a altura para não engolir a tela no PC */
-    .main-content { padding: 20px 15px 150px; } /* Adiciona espaço extra no fundo da página para a tabela não sumir atrás do rodapé */
+    /* MANTÉM O RODAPÉ NO COMPUTADOR */
+    .sys-footer-banner { display: block; } 
+    .banner-img-bottom { max-height: 150px; } 
+    .main-content { padding: 20px 15px 180px; } /* Ajuste de segurança para a tabela pular o rodapé e o grito de guerra */
 
-    /* 3. Expande os cartões e a tabela para usar o monitor inteiro */
+    /* Expande os cartões e a tabela para usar o monitor inteiro */
     .sys-card { padding: 30px; }
     .acc-header { font-size: 16px; padding: 20px; }
     .search-bar input { font-size: 16px; padding: 16px 16px 16px 50px; }
     
-    /* Tabela mais confortável e imponente no monitor */
     .hist-table { font-size: 15px; }
     .hist-table th { font-size: 13px; padding: 14px 10px; }
     .hist-table td { padding: 14px 10px; }
