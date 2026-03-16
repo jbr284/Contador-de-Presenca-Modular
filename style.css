@@ -164,7 +164,11 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 /* --- 💻 MODO DESKTOP (Telas grandes / Monitores) --- */
 /* ========================================================= */
 @media (min-width: 800px) {
-    /* Expande os cartões e a tabela para usar o monitor inteiro */
+    /* 1. Resolve o corte das imagens (Dá mais altura aos banners no PC) */
+    .banner-img-top { max-height: 280px; }
+    .banner-img-bottom { max-height: 180px; }
+
+    /* 2. Expande os cartões e a tabela para usar o monitor inteiro */
     .sys-card { padding: 30px; }
     
     .acc-header { font-size: 16px; padding: 20px; }
