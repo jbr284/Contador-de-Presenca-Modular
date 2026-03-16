@@ -1,9 +1,9 @@
 /* --- VARIÁVEIS DO SISTEMA --- */
 :root {
-    --primary: #1e3a8a; /* Azul corporativo escuro */
+    --primary: #1e3a8a; 
     --primary-hover: #1e40af;
-    --accent: #3b82f6; /* Azul claro para destaques */
-    --bg-color: #f1f5f9; /* Fundo cinza bem claro */
+    --accent: #3b82f6; 
+    --bg-color: #f1f5f9; 
     --card-bg: #ffffff;
     --text-main: #0f172a;
     --text-muted: #64748b;
@@ -20,7 +20,6 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 /* --- NOVOS CABEÇALHO E RODAPÉ FOTOGRÁFICOS FIXOS --- */
 /* ========================================================= */
 
-/* --- CONTAINER DO TOPO (FIXO) --- */
 .sys-header-banner {
     width: 100%;
     background-color: #000; 
@@ -32,7 +31,6 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
     box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
 }
 
-/* --- IMAGEM DO TOPO --- */
 .banner-img-top {
     width: 100%;
     height: auto; 
@@ -41,7 +39,6 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
     object-position: center; 
 }
 
-/* --- CONTAINER DO RODAPÉ (FIXO) --- */
 .sys-footer-banner {
     width: 100%;
     background-color: #000;
@@ -54,7 +51,6 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
     box-shadow: 0 -4px 10px rgba(0,0,0,0.3); 
 }
 
-/* --- IMAGEM DO RODAPÉ --- */
 .banner-img-bottom {
     width: 100%;
     height: auto;
@@ -67,7 +63,6 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 /* --- RESTANTE DO ESTILO DO SISTEMA --- */
 /* ========================================================= */
 
-/* --- NAVEGAÇÃO (ABAS MODERNAS ESTILO APP) --- */
 .nav-tabs {
     display: flex;
     background: #e2e8f0; 
@@ -75,10 +70,11 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
     margin: 20px 15px 0; 
     border-radius: 12px;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.06); 
-    max-width: 770px;
+    /* AQUI: Largura expandida para usar melhor a tela do PC */
+    max-width: 1200px; 
 }
 
-@media (min-width: 800px) {
+@media (min-width: 1250px) {
     .nav-tabs { margin: 20px auto 0; }
 }
 
@@ -106,13 +102,12 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
     box-shadow: 0 2px 6px rgba(0,0,0,0.1); 
 }
 
-/* --- CONTAINER PRINCIPAL --- */
-.main-content { max-width: 800px; margin: 0 auto; padding: 20px 15px 40px; flex: 1; }
+/* AQUI: Largura expandida de 800px para 1200px no conteúdo principal */
+.main-content { max-width: 1200px; margin: 0 auto; padding: 20px 15px 100px; flex: 1; }
 .tab-pane { display: none; animation: fadeIn 0.3s ease; }
 .tab-pane.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-/* --- COMPONENTES (CARDS) --- */
 .sys-card {
     background: var(--card-bg);
     border-radius: 10px;
@@ -134,7 +129,6 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
     align-items: center;
 }
 
-/* --- INPUTS E FORMULÁRIOS --- */
 .input-group { margin-bottom: 15px; }
 .input-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
 .sys-input {
@@ -149,7 +143,6 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
     color: #1e40af; font-size: 16px; font-weight: bold;
 }
 
-/* --- GRID DE APONTAMENTO (CHÃO DE FÁBRICA) --- */
 .factory-area-card {
     background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
     margin-bottom: 16px; overflow: hidden;
@@ -175,7 +168,6 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 }
 .day-cell input:focus { border-color: var(--accent); background-color: #fff; box-shadow: 0 2px 4px rgba(59,130,246,0.1); transform: scale(1.05); }
 
-/* --- BOTÕES --- */
 .sys-btn {
     width: 100%; padding: 14px; border: none; border-radius: 8px;
     font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
@@ -189,159 +181,54 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 .btn-excel:hover { background-color: #15803d; }
 .btn-excel:active { transform: scale(0.98); }
 
-
 /* ========================================================= */
-/* --- ABA DADOS (PESQUISA, SANFONA E TABELA EXCEL) --- */
+/* --- ABA DADOS --- */
 /* ========================================================= */
 
-/* --- BARRA DE PESQUISA --- */
-.search-bar {
-    position: relative;
-    margin-bottom: 20px;
-}
-.search-icon {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-muted);
-}
+.search-bar { position: relative; margin-bottom: 20px; }
+.search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
 .search-bar input {
-    width: 100%;
-    padding: 12px 12px 12px 40px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 15px;
-    color: var(--text-main);
-    background-color: #f8fafc;
-    transition: 0.2s;
+    width: 100%; padding: 12px 12px 12px 40px; border: 1px solid var(--border);
+    border-radius: 8px; font-size: 15px; color: var(--text-main); background-color: #f8fafc; transition: 0.2s;
 }
-.search-bar input:focus {
-    border-color: var(--primary);
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
-    background-color: #fff;
-}
+.search-bar input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1); background-color: #fff; }
 
-/* --- SANFONA (ACCORDION) --- */
-.accordion-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 25px;
-}
-.acc-item {
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: #fff;
-    overflow: hidden;
-}
+.accordion-wrapper { display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px; }
+.acc-item { border: 1px solid var(--border); border-radius: 8px; background: #fff; overflow: hidden; }
 .acc-header {
-    padding: 15px;
-    background: #f8fafc;
-    font-weight: 700;
-    color: var(--primary);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    transition: background 0.2s;
+    padding: 15px; background: #f8fafc; font-weight: 700; color: var(--primary);
+    display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: background 0.2s;
 }
 .acc-header:hover { background: #f1f5f9; }
 .acc-icon { transition: transform 0.3s ease; }
 .acc-item.active .acc-icon { transform: rotate(180deg); }
 
-.acc-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-out;
-    background: #fff;
-}
-.acc-item.active .acc-content {
-    max-height: 2000px; 
-    padding: 15px;
-    border-top: 1px solid var(--border);
-}
+.acc-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background: #fff; }
+.acc-item.active .acc-content { max-height: 2000px; padding: 15px; border-top: 1px solid var(--border); }
 
-/* --- TABELA DENTRO DA SANFONA (ESTILO EXCEL) --- */
-.hist-table-wrapper {
-    width: 100%;
-    overflow-x: auto; 
-    background: white;
-}
-.hist-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-    text-align: center;
-}
-.hist-table th, .hist-table td {
-    border: 1px solid #94a3b8; 
-    padding: 10px 6px;
-}
-.hist-table th {
-    background-color: #f8fafc;
-    font-weight: 700;
-    color: var(--text-muted);
-    font-size: 11px;
-}
-.td-area-hist {
-    font-weight: 600;
-    text-align: left;
-    padding-left: 10px !important;
-    background-color: #f8fafc;
-}
-.td-turno-hist {
-    font-weight: 600;
-    color: var(--text-muted);
-}
-.td-total-hist {
-    font-weight: bold;
-    color: var(--text-main);
-    background-color: #f1f5f9;
-}
-.row-total-hist td {
-    background-color: var(--excel-header);
-    font-weight: 700;
-    color: var(--primary);
-    border-top: 2px solid #22c55e !important; 
-}
-
+.hist-table-wrapper { width: 100%; overflow-x: auto; background: white; }
+.hist-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: center; }
+.hist-table th, .hist-table td { border: 1px solid #94a3b8; padding: 10px 6px; }
+.hist-table th { background-color: #f8fafc; font-weight: 700; color: var(--text-muted); font-size: 11px; }
+.td-area-hist { font-weight: 600; text-align: left; padding-left: 10px !important; background-color: #f8fafc; }
+.td-turno-hist { font-weight: 600; color: var(--text-muted); }
+.td-total-hist { font-weight: bold; color: var(--text-main); background-color: #f1f5f9; }
+.row-total-hist td { background-color: var(--excel-header); font-weight: 700; color: var(--primary); border-top: 2px solid #22c55e !important; }
 
 /* ========================================================= */
-/* --- MÁGICA DE REDUÇÃO PROPORCIONAL PARA CELULARES --- */
+/* --- MÁGICA DE REDUÇÃO AGRESSIVA PARA CELULARES --- */
 /* ========================================================= */
-@media (max-width: 500px) {
-    /* Recuperando o espaço lateral "perdido" (reduz as margens) */
-    .nav-tabs { margin: 15px 5px 0; }
-    .main-content { padding: 15px 5px 40px; } 
-    .sys-card { padding: 15px 8px; }
-    .acc-item.active .acc-content { padding: 12px 3px; }
+@media (max-width: 600px) {
+    .nav-tabs { margin: 15px 4px 0; }
+    .main-content { padding: 15px 4px 120px; } 
+    .sys-card { padding: 15px 4px; } 
+    
+    .acc-header { padding: 12px 8px; }
+    .acc-item.active .acc-content { padding: 10px 0; } 
 
-    /* Ajuste da tabela com o novo espaço ganho */
-    .hist-table {
-        font-size: 11px; /* Aumentei um pouco a fonte graças ao espaço extra! */
-    }
-    .hist-table th, .hist-table td {
-        padding: 8px 3px;
-    }
-    .hist-table th {
-        font-size: 9.5px;
-        padding: 6px 2px;
-    }
-    .td-area-hist {
-        font-size: 11px;
-        padding-left: 5px !important;
-        letter-spacing: normal; /* Removido o esmagamento das letras */
-    }
-    .row-total-hist td {
-        font-size: 11px;
-        padding: 10px 3px !important;
-    }
-}
-
-@media (max-width: 380px) {
-    .hist-table { font-size: 10px; }
-    .hist-table th { font-size: 9px; }
-    .td-area-hist { font-size: 10px; }
+    .hist-table { font-size: 11.5px; } 
+    .hist-table th, .hist-table td { padding: 8px 2px; }
+    .hist-table th { font-size: 10px; padding: 6px 1px; }
+    .td-area-hist { font-size: 11.5px; padding-left: 4px !important; }
+    .row-total-hist td { font-size: 11.5px; padding: 10px 2px !important; }
 }
