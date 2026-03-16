@@ -434,19 +434,29 @@ const hoje = new Date();
 inputData.value = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')}`;
 processarDataCalendario();
 
+
 // =========================================================
-// --- MÓDULO INTELIGENTE: LEITURA DE WHATSAPP ---
+// --- MÓDULO INTELIGENTE: LEITURA E PREENCHIMENTO AUTOMÁTICO
 // =========================================================
 window.lerMensagemWhatsApp = function() {
     const inputTexto = document.getElementById('texto-whatsapp');
     const texto = inputTexto.value;
+    
+    // Captura o select de dia adicionado no HTML
+    const selectDia = document.getElementById('dia-whatsapp');
+    const diaSelecionado = selectDia ? selectDia.value : null;
     
     if (!texto || texto.trim() === '') {
         alert("⚠️ Por favor, cole a mensagem padrão do supervisor na caixa de texto primeiro.");
         return;
     }
 
-    // 1. Identifica o Turno (Blindado: aceita º, °, letra 'o', 'O' ou nenhum símbolo)
+    if (!diaSelecionado) {
+        alert("⚠️ Por favor, selecione para qual dia da semana deseja lançar os dados.");
+        return;
+    }
+
+    // 1. Identifica o Turno
     const turnoMatch = texto.match(/(1|2)[º°oO]?\s*turno/i);
     const turno = turnoMatch ? turnoMatch[1] : null;
 
@@ -455,40 +465,49 @@ window.lerMensagemWhatsApp = function() {
         return;
     }
 
-    // 2. Função auxiliar para extrair dados limpos ignorando sujeira (emojis/espaços)
+    // 2. Extrai os valores usando Regex
     const extrairValor = (nomeAreaRegex) => {
         const regex = new RegExp(`${nomeAreaRegex}:\\s*(\\d+)`, 'i');
         const match = texto.match(regex);
         return match ? parseInt(match[1], 10) : 0;
     };
 
-    // 3. Captura os valores mapeando as áreas
     const dadosLidos = {
         fabricacao: extrairValor("Fabricação"),
         estrutural: extrairValor("Estrutural"),
         montagem: extrairValor("Montagem Final"),
-        paineis: extrairValor("Pain[eé]is") // Aceita com ou sem acento
+        paineis: extrairValor("Pain[eé]is")
     };
 
-    // 4. Teste Visual de Validação para o Analista
-    alert(
-        `✅ Leitura Concluída com Sucesso!\n\n` +
-        `Turno Detectado: ${turno}º Turno\n` +
-        `--------------------------\n` +
-        `P3 - Fabricação: ${dadosLidos.fabricacao}\n` +
-        `P3 - Estrutural: ${dadosLidos.estrutural}\n` +
-        `P4 - Montagem Final: ${dadosLidos.montagem}\n` +
-        `P4 - Painéis: ${dadosLidos.paineis}\n\n` +
-        `A automação identificou os números corretamente?`
-    );
+    // 3. PREENCHIMENTO AUTOMÁTICO DOS INPUTS NA TELA
+    try {
+        // Mapeia a sigla do select (seg, ter...) para o número da coluna (0 a 4)
+        const diasMap = { 'seg': 0, 'ter': 1, 'qua': 2, 'qui': 3, 'sex': 4 };
+        const diaIndex = diasMap[diaSelecionado];
 
-    // Limpa a caixa de leitura após o processamento
-    inputTexto.value = '';
+        // Mapeia o indexBD correspondente à Área e ao Turno
+        // Estrutura: Fab 1(0), Fab 2(1), Est 1(2), Est 2(3), Mont 1(4), Mont 2(5), Painéis 1(6), Painéis 2(7)
+        const idxFab = turno === "1" ? 0 : 1;
+        const idxEst = turno === "1" ? 2 : 3;
+        const idxMont = turno === "1" ? 4 : 5;
+        const idxPainel = turno === "1" ? 6 : 7;
 
-    /* =========================================================
-       PROXIMO PASSO: PREENCHIMENTO AUTOMÁTICO NA TELA
-       Quando confirmarmos que a leitura está 100%, substituiremos 
-       o "alert" acima por um script que insere esses valores 
-       direto nos inputs do seu formulário no dia correto da semana.
-       ========================================================= */
+        // Injeta os valores direto nos inputs!
+        document.getElementById(`in-${idxFab}-${diaIndex}`).value = dadosLidos.fabricacao;
+        document.getElementById(`in-${idxEst}-${diaIndex}`).value = dadosLidos.estrutural;
+        document.getElementById(`in-${idxMont}-${diaIndex}`).value = dadosLidos.montagem;
+        document.getElementById(`in-${idxPainel}-${diaIndex}`).value = dadosLidos.paineis;
+
+        // Pega o nome do dia formatado (ex: "Preencher na Segunda-feira") para a mensagem
+        const nomeDia = selectDia.options[selectDia.selectedIndex].text.replace("Preencher na ", "");
+
+        alert(`✅ Sucesso! Dados do ${turno}º Turno injetados na coluna de ${nomeDia}.\n\nVerifique a tabela e lembre-se de clicar no botão verde de "Guardar Lançamentos" no final!`);
+
+        // Limpa a caixa de leitura para não poluir
+        inputTexto.value = '';
+
+    } catch (error) {
+        console.error("Erro na injeção de dados:", error);
+        alert("❌ O robô leu os dados, mas ocorreu um erro ao preencher a tabela.");
+    }
 };
