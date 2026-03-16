@@ -21,7 +21,6 @@ let chaveBancoAtual = "";
 let dadosAtuais = []; 
 let historicoCompleto = []; 
 
-// NOME DA NOVA COLEÇÃO NO BANCO DE DADOS
 const COLECAO_BD = "contador_de_presenca";
 
 // Retorna a matriz limpa
@@ -438,34 +437,77 @@ processarDataCalendario();
 // =========================================================
 // --- MÓDULO INTELIGENTE: LEITURA E PREENCHIMENTO AUTOMÁTICO
 // =========================================================
-window.lerMensagemWhatsApp = function() {
+window.lerMensagemWhatsApp = async function() {
     const inputTexto = document.getElementById('texto-whatsapp');
     const texto = inputTexto.value;
-    
-    // Captura o select de dia adicionado no HTML
-    const selectDia = document.getElementById('dia-whatsapp');
-    const diaSelecionado = selectDia ? selectDia.value : null;
     
     if (!texto || texto.trim() === '') {
         alert("⚠️ Por favor, cole a mensagem padrão do supervisor na caixa de texto primeiro.");
         return;
     }
 
-    if (!diaSelecionado) {
-        alert("⚠️ Por favor, selecione para qual dia da semana deseja lançar os dados.");
+    // 1. EXTRAÇÃO DA DATA E IDENTIFICAÇÃO DO MÊS
+    let dia, mes;
+    const anoAtual = new Date().getFullYear();
+
+    const regexBarra = /(\d{1,2})\/(\d{1,2})/; 
+    const matchBarra = texto.match(regexBarra);
+
+    const regexExtenso = /(\d{1,2})\s*de\s*([a-zA-ZçÇ]+)/i; 
+    const matchExtenso = texto.match(regexExtenso);
+
+    if (matchBarra) {
+        dia = parseInt(matchBarra[1], 10);
+        mes = parseInt(matchBarra[2], 10) - 1; 
+    } else if (matchExtenso) {
+        dia = parseInt(matchExtenso[1], 10);
+        const nomeMes = matchExtenso[2].toLowerCase();
+        const mesesMap = {
+            'janeiro': 0, 'jan': 0, 'fevereiro': 1, 'fev': 1, 'março': 2, 'marco': 2, 'mar': 2,
+            'abril': 3, 'abr': 3, 'maio': 4, 'mai': 4, 'junho': 5, 'jun': 5,
+            'julho': 6, 'jul': 6, 'agosto': 7, 'ago': 7, 'setembro': 8, 'set': 8,
+            'outubro': 9, 'out': 9, 'novembro': 10, 'nov': 10, 'dezembro': 11, 'dez': 11
+        };
+        mes = mesesMap[nomeMes];
+        if (mes === undefined) {
+            alert(`❌ Erro: Não consegui reconhecer o mês "${nomeMes}" na mensagem.`);
+            return;
+        }
+    } else {
+        alert("❌ Erro: Não encontrei uma data válida na mensagem (ex: 16/03 ou 13 de Março).");
         return;
     }
 
-    // 1. Identifica o Turno
+    // 2. DESCOBRE O DIA DA SEMANA
+    const dataMensagem = new Date(anoAtual, mes, dia, 12, 0, 0);
+    const diaDaSemana = dataMensagem.getDay(); 
+
+    if (diaDaSemana === 0 || diaDaSemana === 6) {
+        alert(`⚠️ A data identificada (${dia}/${mes+1}) cai num Fim de Semana. O sistema só aceita lançamentos de Segunda a Sexta.`);
+        return;
+    }
+
+    const diaIndex = diaDaSemana - 1; 
+    const diasNomes = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
+
+    // 3. ATUALIZAR O SISTEMA E O BANCO DE DADOS
+    const mesFormatado = String(mes + 1).padStart(2, '0');
+    const diaFormatado = String(dia).padStart(2, '0');
+    
+    document.getElementById('input-data').value = `${anoAtual}-${mesFormatado}-${diaFormatado}`;
+    
+    // O await força o JavaScript a pausar e esperar a tabela renderizar na tela
+    await window.processarDataCalendario();
+
+    // 4. EXTRAÇÃO DOS DADOS DE PRODUÇÃO
     const turnoMatch = texto.match(/(1|2)[º°oO]?\s*turno/i);
     const turno = turnoMatch ? turnoMatch[1] : null;
 
     if (!turno) {
-        alert("❌ Erro de Leitura: Não consegui identificar '1º turno' ou '2º turno' no cabeçalho.\nVerifique se copiou a mensagem inteira.");
+        alert("❌ Erro de Leitura: Não consegui identificar o turno no cabeçalho da mensagem.");
         return;
     }
 
-    // 2. Extrai os valores usando Regex
     const extrairValor = (nomeAreaRegex) => {
         const regex = new RegExp(`${nomeAreaRegex}:\\s*(\\d+)`, 'i');
         const match = texto.match(regex);
@@ -479,35 +521,23 @@ window.lerMensagemWhatsApp = function() {
         paineis: extrairValor("Pain[eé]is")
     };
 
-    // 3. PREENCHIMENTO AUTOMÁTICO DOS INPUTS NA TELA
+    // 5. INJEÇÃO DOS DADOS NA TABELA
     try {
-        // Mapeia a sigla do select (seg, ter...) para o número da coluna (0 a 4)
-        const diasMap = { 'seg': 0, 'ter': 1, 'qua': 2, 'qui': 3, 'sex': 4 };
-        const diaIndex = diasMap[diaSelecionado];
-
-        // Mapeia o indexBD correspondente à Área e ao Turno
-        // Estrutura: Fab 1(0), Fab 2(1), Est 1(2), Est 2(3), Mont 1(4), Mont 2(5), Painéis 1(6), Painéis 2(7)
         const idxFab = turno === "1" ? 0 : 1;
         const idxEst = turno === "1" ? 2 : 3;
         const idxMont = turno === "1" ? 4 : 5;
         const idxPainel = turno === "1" ? 6 : 7;
 
-        // Injeta os valores direto nos inputs!
         document.getElementById(`in-${idxFab}-${diaIndex}`).value = dadosLidos.fabricacao;
         document.getElementById(`in-${idxEst}-${diaIndex}`).value = dadosLidos.estrutural;
         document.getElementById(`in-${idxMont}-${diaIndex}`).value = dadosLidos.montagem;
         document.getElementById(`in-${idxPainel}-${diaIndex}`).value = dadosLidos.paineis;
 
-        // Pega o nome do dia formatado (ex: "Preencher na Segunda-feira") para a mensagem
-        const nomeDia = selectDia.options[selectDia.selectedIndex].text.replace("Preencher na ", "");
-
-        alert(`✅ Sucesso! Dados do ${turno}º Turno injetados na coluna de ${nomeDia}.\n\nVerifique a tabela e lembre-se de clicar no botão verde de "Guardar Lançamentos" no final!`);
-
-        // Limpa a caixa de leitura para não poluir
+        alert(`✅ Automação Concluída!\n\n1. Data lida: ${diaFormatado}/${mesFormatado}.\n2. Calendário ajustado para a semana correta.\n3. Dados do ${turno}º Turno injetados na ${diasNomes[diaIndex]}-feira.\n\nVerifique os números na tela e clique em "Guardar Lançamentos"!`);
         inputTexto.value = '';
 
     } catch (error) {
         console.error("Erro na injeção de dados:", error);
-        alert("❌ O robô leu os dados, mas ocorreu um erro ao preencher a tabela.");
+        alert("❌ O robô leu os dados e atualizou o calendário, mas falhou ao preencher as caixas.");
     }
 };
