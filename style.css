@@ -18,73 +18,156 @@
 body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-smoothing: antialiased; display: flex; flex-direction: column; min-height: 100vh; }
 
 /* ========================================================= */
-/* --- BANNERS FIXOS (TOPO E RODAPÉ) --- */
+/* --- CABEÇALHO E RODAPÉ FIXOS (DESIGN RESPONSIVO) --- */
 /* ========================================================= */
-.sys-header-banner {
-    width: 100%; background-color: #000; overflow: hidden; line-height: 0;
-    position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
-}
-.banner-img-top { width: 100%; height: auto; max-height: 15vh; object-fit: cover; object-position: center; }
 
-.sys-footer-banner {
-    width: 100%; background-color: #000; overflow: hidden; line-height: 0;
-    margin-top: auto; position: sticky; bottom: 0; z-index: 100; box-shadow: 0 -4px 10px rgba(0,0,0,0.3); 
+/* --- CONTAINER DO TOPO (FIXO) --- */
+.sys-header-banner {
+    width: 100%;
+    background-color: #000; 
+    overflow: hidden;
+    line-height: 0;
+    position: sticky; 
+    top: 0;
+    z-index: 100; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
 }
-.banner-img-bottom { width: 100%; height: auto; max-height: 12vh; object-fit: cover; object-position: center; }
+
+/* --- Imagem fotográfica (que aparece apenas no celular) --- */
+.banner-img-top {
+    width: 100%;
+    height: auto; 
+    max-height: 15vh; /* Altura de respiro no celular */
+    object-fit: cover; 
+    object-position: center; 
+}
+
+/* --- Design limpo do cabeçalho (que aparece apenas no PC) --- */
+.header-desktop-content {
+    display: none; /* Escondido por padrão (no celular) */
+}
+
+/* --- RODAPÉ (BANNER FIXO) --- */
+.sys-footer-banner {
+    width: 100%;
+    background-color: #000;
+    overflow: hidden;
+    line-height: 0;
+    margin-top: auto; 
+    position: sticky; 
+    bottom: 0;
+    z-index: 100;
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.3); 
+}
+
+.banner-img-bottom {
+    width: 100%;
+    height: auto;
+    max-height: 12vh; 
+    object-fit: cover;
+    object-position: center;
+}
 
 /* ========================================================= */
 /* --- ESTRUTURA PRINCIPAL --- */
 /* ========================================================= */
-.nav-tabs {
-    display: flex; background: #e2e8f0; padding: 6px; margin: 20px auto 0; 
-    border-radius: 12px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.06); 
-    max-width: 1100px; width: calc(100% - 20px);
-}
-.nav-tab {
-    flex: 1; text-align: center; padding: 12px 10px; font-size: 14px; font-weight: 700;
-    color: var(--text-muted); cursor: pointer; border-radius: 8px; transition: all 0.3s ease; 
-    display: flex; align-items: center; justify-content: center; gap: 8px; 
-}
-.nav-tab:hover { color: var(--primary); }
-.nav-tab.active { color: var(--primary); background-color: var(--card-bg); box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
 
-.main-content { max-width: 1100px; margin: 0 auto; padding: 20px 10px 100px; flex: 1; width: 100%; }
+.nav-tabs {
+    display: flex;
+    background: #e2e8f0; 
+    padding: 6px;
+    margin: 20px 15px 0; 
+    border-radius: 12px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06); 
+    max-width: 1100px;
+    width: calc(100% - 20px);
+}
+
+@media (min-width: 1150px) {
+    .nav-tabs { margin: 20px auto 0; }
+}
+
+.nav-tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: 8px; 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; 
+}
+
+.nav-tab:hover { color: var(--primary); }
+
+.nav-tab.active {
+    color: var(--primary);
+    background-color: var(--card-bg); 
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1); 
+}
+
+/* CONTAINER PRINCIPAL: Garante que os botões do final pulem o banner do rodapé */
+.main-content { max-width: 1100px; margin: 0 auto; padding: 20px 15px 120px; flex: 1; width: 100%; }
 .tab-pane { display: none; animation: fadeIn 0.3s ease; }
 .tab-pane.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
+/* COMPONENTES (CARDS BRANCOS) */
 .sys-card {
-    background: var(--card-bg); border-radius: 10px; border: 1px solid var(--border);
-    padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    background: var(--card-bg);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
+
 .sys-card-title {
-    font-size: 13px; text-transform: uppercase; color: var(--text-muted); font-weight: 700;
-    margin-bottom: 15px; letter-spacing: 0.5px; display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-bottom: 15px;
+    letter-spacing: 0.5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 /* ========================================================= */
-/* --- INPUTS E FORMULÁRIOS (ABA LANÇAMENTOS) --- */
+/* --- ABA LANÇAMENTOS (INPUTS E FORMULÁRIOS) --- */
 /* ========================================================= */
+
 .input-group { margin-bottom: 15px; }
 .input-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
 .sys-input {
     width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 6px;
     font-size: 15px; color: var(--text-main); transition: 0.2s; background-color: #f8fafc;
 }
-.sys-input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); background-color: #fff; }
+.sys-input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); background-color: #fff; }
 
 .date-display {
-    text-align: center; margin-top: 10px; padding: 12px; background: #eff6ff; 
-    border: 1px solid #bfdbfe; border-radius: 6px; color: #1e40af; font-size: 16px; font-weight: bold;
+    text-align: center; margin-top: 10px; padding: 12px;
+    background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px;
+    color: #1e40af; font-size: 16px; font-weight: bold;
 }
 
-.factory-area-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 16px; overflow: hidden; }
+.factory-area-card {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
+    margin-bottom: 16px; overflow: hidden;
+}
 .factory-area-header {
     background: #f8fafc; padding: 12px 16px; font-weight: 700; color: var(--text-main);
     border-bottom: 1px solid var(--border); display: flex; align-items: center;
 }
 .factory-area-header::before {
-    content: ''; display: inline-block; width: 8px; height: 8px; background-color: var(--primary); border-radius: 50%; margin-right: 10px;
+    content: ''; display: inline-block; width: 8px; height: 8px;
+    background-color: var(--primary); border-radius: 50%; margin-right: 10px;
 }
 .shift-row { display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px dashed var(--border); }
 .shift-row:last-child { border-bottom: none; }
@@ -94,22 +177,26 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 .day-cell label { display: block; font-size: 11px; font-weight: 700; color: #94a3b8; margin-bottom: 4px; text-transform: lowercase; }
 .day-cell input {
     width: 100%; padding: 10px 0; text-align: center; border: 1px solid var(--border);
-    border-radius: 6px; font-size: 16px; font-weight: 700; color: var(--primary); background-color: #f8fafc; transition: all 0.2s ease;
+    border-radius: 6px; font-size: 16px; font-weight: 700; color: var(--primary);
+    background-color: #f8fafc; transition: all 0.2s ease;
 }
-.day-cell input:focus { border-color: var(--accent); background-color: #fff; box-shadow: 0 2px 4px rgba(59,130,246,0.1); transform: scale(1.05); }
+.day-cell input:focus { border-color: var(--accent); background-color: #fff; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1); transform: scale(1.05); }
 
 .sys-btn {
-    width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; 
-    cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 14px; border: none; border-radius: 8px;
+    font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 .btn-primary { background-color: var(--primary); color: white; }
 .btn-primary:hover { background-color: var(--primary-hover); }
-.btn-excel { background-color: var(--success); color: white; margin-top: 20px; box-shadow: 0 4px 12px rgba(22,163,74,0.2); }
+
+.btn-excel { background-color: var(--success); color: white; margin-top: 20px; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2); }
 .btn-excel:hover { background-color: #15803d; }
 
 /* ========================================================= */
 /* --- ABA DADOS (PESQUISA, SANFONA E TABELA) --- */
 /* ========================================================= */
+
 .search-bar { position: relative; margin-bottom: 20px; }
 .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
 .search-bar input {
@@ -125,6 +212,7 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 }
 .acc-icon { transition: transform 0.3s ease; }
 .acc-item.active .acc-icon { transform: rotate(180deg); }
+
 .acc-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background: #fff; }
 .acc-item.active .acc-content { max-height: 2000px; padding: 15px; border-top: 1px solid var(--border); }
 
@@ -159,25 +247,31 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
     .td-area-hist { font-size: 11.5px; padding-left: 6px !important; }
     .row-total-hist td { font-size: 11.5px; padding: 10px 3px !important; }
 }
+
 /* ========================================================= */
 /* --- 💻 MODO DESKTOP (Telas grandes / Monitores) --- */
 /* ========================================================= */
 @media (min-width: 800px) {
-    /* 1. Salva o texto do corte e aumenta a altura drasticamente */
-    .banner-img-top { 
-        max-height: 400px !important; 
-        object-position: bottom center !important; /* Força o navegador a mostrar o chão da foto onde está o título */
+    /* 1. Executa a troca de design (Mata a foto, mostra design limpo) */
+    .sys-header-banner { background-color: var(--primary); box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .banner-img-top { display: none !important; } /* Esconde a foto */
+
+    .header-desktop-content {
+        display: flex; align-items: center; padding: 15px 30px; height: 70px; gap: 15px; max-width: 1100px; margin: 0 auto;
     }
-    .banner-img-bottom { 
-        max-height: 250px !important; 
-    }
+    .logo-desktop { height: 40px; }
+    .app-title-desktop { color: white; font-size: 20px; font-weight: 600; letter-spacing: 0.5px; }
+
+    /* Esconde o banner do rodapé no PC para liberar 100% da tela */
+    .sys-footer-banner { display: none; }
+    .main-content { padding: 20px 15px 60px; } /* Ajusta o padding do fundo já que não tem rodapé */
 
     /* 2. Expande os cartões e a tabela para usar o monitor inteiro */
     .sys-card { padding: 30px; }
-    
     .acc-header { font-size: 16px; padding: 20px; }
     .search-bar input { font-size: 16px; padding: 16px 16px 16px 50px; }
     
+    /* Tabela mais confortável e imponente no monitor */
     .hist-table { font-size: 15px; }
     .hist-table th { font-size: 13px; padding: 14px 10px; }
     .hist-table td { padding: 14px 10px; }
