@@ -1,4 +1,4 @@
-const CACHE_NAME = 'app-faltas-v12';
+const CACHE_NAME = 'app-faltas-v12.1';
 
 // Arquivos estruturais do sistema (Interface e Lógica)
 const ASSETS_TO_CACHE = [
