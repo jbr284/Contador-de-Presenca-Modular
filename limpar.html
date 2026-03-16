@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faxina do Banco de Dados</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f1f5f9; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+    .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; max-width: 400px; }
+    h1 { color: #1e3a8a; font-size: 24px; margin-bottom: 10px; }
+    p { color: #64748b; font-size: 14px; margin-bottom: 30px; }
+    button { background-color: #dc2626; color: white; border: none; padding: 15px 20px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.2s; width: 100%; }
+    button:hover { background-color: #b91c1c; }
+    button:disabled { background-color: #94a3b8; cursor: not-allowed; }
+    #status { margin-top: 20px; font-weight: bold; font-size: 15px; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+      <h1>🧹 Limpeza Geral</h1>
+      <p>Esta ferramenta vai varrer o Firestore e deletar permanentemente todas as semanas de teste registradas.</p>
+      
+      <button id="btn-limpar">Apagar Todos os Dados Agora</button>
+      <div id="status"></div>
+  </div>
+
+  <script type="module">
+    // Importa o Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+    // Suas credenciais
+    const firebaseConfig = {
+      apiKey: "AIzaSyAZsg2GbxrgX70VZwPHiXkoFMCTt7i3_6U",
+      authDomain: "indicador-de-presenca-modular.firebaseapp.com",
+      projectId: "indicador-de-presenca-modular",
+      storageBucket: "indicador-de-presenca-modular.firebasestorage.app",
+      messagingSenderId: "895253390208",
+      appId: "1:895253390208:web:943f8679a0dbf36a531765"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    document.getElementById('btn-limpar').addEventListener('click', async () => {
+        const status = document.getElementById('status');
+        const btn = document.getElementById('btn-limpar');
+        
+        // Trava de segurança
+        if(!confirm("ALERTA: Tem certeza absoluta? Isso vai zerar o banco de dados e não pode ser desfeito.")) return;
+        
+        btn.disabled = true;
+        status.style.color = "#1e3a8a";
+        status.innerText = "Conectando ao banco...";
+        
+        try {
+            // 1. Puxa todos os documentos da coleção
+            const querySnapshot = await getDocs(collection(db, "faltas_producao"));
+            let contagem = 0;
+            const total = querySnapshot.size;
+
+            if(total === 0) {
+                status.style.color = "#16a34a";
+                status.innerText = "O banco já está vazio!";
+                btn.disabled = false;
+                return;
+            }
+            
+            // 2. Faz um loop e deleta um por um
+            for (const documento of querySnapshot.docs) {
+                await deleteDoc(doc(db, "faltas_producao", documento.id));
+                contagem++;
+                status.innerText = `Limpando... (${contagem} de ${total})`;
+            }
+            
+            // 3. Finaliza
+            status.style.color = "#16a34a";
+            status.innerText = `✨ Sucesso! ${contagem} registros de teste foram apagados. O sistema está virgem!`;
+            
+        } catch (error) {
+            console.error(error);
+            status.style.color = "#dc2626";
+            status.innerText = "Erro ao limpar o banco. Verifique sua conexão.";
+        } finally {
+            btn.disabled = false;
+        }
+    });
+  </script>
+</body>
+</html>
