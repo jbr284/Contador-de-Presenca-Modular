@@ -40,7 +40,7 @@
                   <i class="fa-brands fa-whatsapp"></i> Leitura Inteligente do Apontamento
               </div>
               <div class="input-group">
-                  <textarea id="texto-whatsapp" class="sys-input" placeholder="Cole aqui a mensagem do supervisor (exatamente como veio do WhatsApp)..."></textarea>
+                  <textarea id="texto-whatsapp" class="sys-input input-whatsapp" placeholder="Cole aqui a mensagem do supervisor (exatamente como veio do WhatsApp)..."></textarea>
               </div>
               <button class="sys-btn btn-whatsapp" onclick="lerMensagemWhatsApp()">
                   <i class="fa-solid fa-wand-magic-sparkles"></i> Processar Dados Automáticos
@@ -61,7 +61,7 @@
           <div class="sys-card-title" style="margin-top: 30px;">Planilha de Produção</div>
           <div id="form-areas"></div>
 
-          <button class="sys-btn btn-primary" onclick="salvarTodosOsDados()" id="btn-save">
+          <button class="sys-btn btn-primary btn-save" onclick="salvarTodosOsDados()" id="btn-save">
               <i class="fa-solid fa-cloud-arrow-up"></i> Guardar Lançamentos
           </button>
       </section>
@@ -72,7 +72,7 @@
               
               <div class="search-bar">
                   <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                  <input type="text" id="input-busca" placeholder="Buscar semana (Ex: fev, mar...)" oninput="filtrarSanfona()">
+                  <input type="text" id="input-busca" class="sys-input" placeholder="Buscar semana (Ex: fev, mar...)" oninput="filtrarSanfona()">
               </div>
 
               <div id="accordion-container" class="accordion-wrapper">
