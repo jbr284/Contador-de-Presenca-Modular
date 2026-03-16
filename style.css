@@ -17,40 +17,48 @@
 body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-smoothing: antialiased; display: flex; flex-direction: column; min-height: 100vh; }
 
 /* ========================================================= */
-/* --- NOVOS CABEÇALHO E RODAPÉ FOTOGRÁFICOS (BANNERS) --- */
+/* --- NOVOS CABEÇALHO E RODAPÉ FOTOGRÁFICOS FIXOS --- */
 /* ========================================================= */
 
-/* --- CONTAINER DO TOPO --- */
+/* --- CONTAINER DO TOPO (FIXO) --- */
 .sys-header-banner {
     width: 100%;
-    background-color: #000; /* Fundo preto caso a imagem demore a carregar */
+    background-color: #000; 
     overflow: hidden;
-    line-height: 0; /* Remove espaços em branco indesejados abaixo da imagem */
+    line-height: 0;
+    position: sticky; 
+    top: 0;
+    z-index: 100; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
 }
 
 /* --- IMAGEM DO TOPO --- */
 .banner-img-top {
     width: 100%;
-    height: auto; /* Mantém a proporção original da foto */
-    max-height: 25vh; /* Limita a altura a 25% da altura da tela do celular para não ocupar espaço demais */
-    object-fit: cover; /* Faz a imagem preencher o espaço, cortando as laterais se necessário, sem amassar */
-    object-position: center; /* Garante que o centro da foto (a logo) fique sempre visível */
+    height: auto; 
+    max-height: 15vh; 
+    object-fit: cover; 
+    object-position: center; 
 }
 
-/* --- CONTAINER DO RODAPÉ --- */
+/* --- CONTAINER DO RODAPÉ (FIXO) --- */
 .sys-footer-banner {
     width: 100%;
     background-color: #000;
     overflow: hidden;
     line-height: 0;
-    margin-top: auto; /* Empurra o rodapé para o final da página se houver pouco conteúdo */
+    margin-top: auto; 
+    position: sticky; 
+    bottom: 0;
+    z-index: 100;
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.3); 
 }
 
 /* --- IMAGEM DO RODAPÉ --- */
 .banner-img-bottom {
     width: 100%;
     height: auto;
-    max-height: 20vh; /* Rodapé um pouco menor que o cabeçalho */
+    max-height: 12vh; 
     object-fit: cover;
     object-position: center;
 }
@@ -301,32 +309,39 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 
 
 /* ========================================================= */
-/* --- MÁGICA DE REDUÇÃO PROPORCIONAL PARA CELULARES (ZOOM OUT) --- */
+/* --- MÁGICA DE REDUÇÃO PROPORCIONAL PARA CELULARES --- */
 /* ========================================================= */
 @media (max-width: 500px) {
+    /* Recuperando o espaço lateral "perdido" (reduz as margens) */
+    .nav-tabs { margin: 15px 5px 0; }
+    .main-content { padding: 15px 5px 40px; } 
+    .sys-card { padding: 15px 8px; }
+    .acc-item.active .acc-content { padding: 12px 3px; }
+
+    /* Ajuste da tabela com o novo espaço ganho */
     .hist-table {
-        font-size: 10px;
+        font-size: 11px; /* Aumentei um pouco a fonte graças ao espaço extra! */
     }
     .hist-table th, .hist-table td {
-        padding: 6px 2px;
+        padding: 8px 3px;
     }
     .hist-table th {
-        font-size: 9px;
-        padding: 5px 1px;
+        font-size: 9.5px;
+        padding: 6px 2px;
     }
     .td-area-hist {
-        font-size: 10px;
-        padding-left: 4px !important;
-        letter-spacing: -0.3px;
+        font-size: 11px;
+        padding-left: 5px !important;
+        letter-spacing: normal; /* Removido o esmagamento das letras */
     }
     .row-total-hist td {
-        font-size: 10px;
-        padding: 8px 2px !important;
+        font-size: 11px;
+        padding: 10px 3px !important;
     }
 }
 
 @media (max-width: 380px) {
-    .hist-table { font-size: 9.5px; }
-    .hist-table th { font-size: 8.5px; }
-    .td-area-hist { font-size: 9.5px; }
+    .hist-table { font-size: 10px; }
+    .hist-table th { font-size: 9px; }
+    .td-area-hist { font-size: 10px; }
 }
