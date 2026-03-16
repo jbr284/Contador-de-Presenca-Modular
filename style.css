@@ -219,35 +219,45 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 /* --- MÁGICA DE REDUÇÃO AGRESSIVA PARA CELULARES --- */
 /* ========================================================= */
 @media (max-width: 600px) {
-    .nav-tabs { margin: 15px 4px 0; }
-    .main-content { padding: 15px 4px 120px; } 
-    .sys-card { padding: 15px 4px; } 
-    
-    .acc-header { padding: 12px 8px; }
-    .acc-item.active .acc-content { padding: 10px 0; } 
+    /* 1. Mata a margem lateral da tela inteira */
+    .main-content { padding: 15px 0px 120px; } 
 
+    /* Mantém as abas superiores com respiro */
+    .nav-tabs { margin: 15px 10px 0; }
+
+    /* 2. Mantém o formulário de Lançamentos em uma caixa bonitinha */
+    #aba-registro .sys-card { padding: 15px 10px; }
+
+    /* 3. A MÁGICA NA ABA DADOS: Remove a caixa branca por fora da sanfona */
+    #aba-dados .sys-card { 
+        padding: 10px 0px; 
+        border: none; 
+        background: transparent; 
+        box-shadow: none; 
+    }
+
+    /* Adiciona respiro apenas nos elementos soltos para não grudarem no vidro */
+    #aba-dados .sys-card-title,
+    #aba-dados .search-bar,
+    #aba-dados .btn-excel {
+        padding: 0 10px;
+    }
+
+    /* 4. A sanfona agora estica 100% de ponta a ponta */
+    .acc-item { 
+        border-left: none; 
+        border-right: none; 
+        border-radius: 0; 
+        margin-bottom: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .acc-header { padding: 12px 10px; }
+    
+    /* 5. Tabela com espaço máximo e respiro interno devolvido */
+    .acc-item.active .acc-content { padding: 12px 4px; } 
     .hist-table { font-size: 11.5px; } 
     .hist-table th, .hist-table td { padding: 8px 2px; }
     .hist-table th { font-size: 10px; padding: 6px 1px; }
-    .td-area-hist { font-size: 11.5px; padding-left: 4px !important; }
+    .td-area-hist { font-size: 11.5px; padding-left: 5px !important; }
     .row-total-hist td { font-size: 11.5px; padding: 10px 2px !important; }
-}
-/* ========================================================= */
-/* --- OTIMIZAÇÃO DE ESPAÇO PARA O COMPUTADOR (DESKTOP) --- */
-/* ========================================================= */
-@media (min-width: 800px) {
-    /* Deixa a Sanfona mais imponente */
-    .acc-header { font-size: 18px; padding: 22px; }
-    
-    /* Aumenta a Barra de Pesquisa */
-    .search-bar input { font-size: 16px; padding: 16px 16px 16px 50px; }
-    .search-icon { font-size: 18px; left: 20px; }
-
-    /* Deixa a Tabela com cara de Excel no Monitor */
-    .hist-table { font-size: 16px; }
-    .hist-table th { font-size: 14px; padding: 16px 10px; }
-    .hist-table td { padding: 16px 10px; }
-    .td-area-hist { font-size: 16px; padding-left: 20px !important; }
-    .td-turno-hist { font-size: 15px; }
-    .row-total-hist td { font-size: 16px; padding: 20px 10px !important; }
 }
