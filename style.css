@@ -2,17 +2,10 @@
 /* --- 1. VARIÁVEIS E RESET GLOBAL --- */
 /* ========================================================= */
 :root {
-    --primary: #1e3a8a; 
-    --primary-hover: #1e40af;
-    --accent: #3b82f6; 
-    --bg-color: #f1f5f9; 
-    --card-bg: #ffffff;
-    --text-main: #0f172a;
-    --text-muted: #64748b;
-    --border: #e2e8f0;
-    --success: #16a34a;
-    --excel-header: #dcfce7;
-    --footer-bg: #0f172a;
+    --primary: #1e3a8a; --primary-hover: #1e40af; --accent: #3b82f6; 
+    --bg-color: #f1f5f9; --card-bg: #ffffff; --text-main: #0f172a;
+    --text-muted: #64748b; --border: #e2e8f0; --success: #16a34a;
+    --excel-header: #dcfce7; --footer-bg: #0f172a;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
@@ -63,7 +56,7 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 .btn-excel:hover { background-color: #15803d; }
 .btn-save { margin-top: 15px; }
 
-/* --- COMPONENTE: CAIXA DO WHATSAPP --- */
+/* CAIXA DO WHATSAPP */
 .card-whatsapp { background-color: #f0fdf4; border-color: #bbf7d0; }
 .title-whatsapp { color: #16a34a; }
 .input-whatsapp { resize: vertical; min-height: 80px; font-family: monospace; font-size: 13px; line-height: 1.5; border-color: #bbf7d0; }
@@ -71,7 +64,7 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 .btn-whatsapp:hover { background-color: #1da851; }
 
 /* ========================================================= */
-/* --- 5. PLANILHA DE PRODUÇÃO (GRID) --- */
+/* --- 5. PLANILHA DE PRODUÇÃO E SANFONA --- */
 /* ========================================================= */
 .date-display { text-align: center; margin-top: 10px; padding: 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; color: #1e40af; font-size: 16px; font-weight: bold; }
 .factory-area-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 16px; overflow: hidden; }
@@ -86,13 +79,8 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 .day-cell input { width: 100%; padding: 10px 0; text-align: center; border: 1px solid var(--border); border-radius: 6px; font-size: 16px; font-weight: 700; color: var(--primary); background-color: #f8fafc; transition: all 0.2s ease; }
 .day-cell input:focus { border-color: var(--accent); background-color: #fff; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1); transform: scale(1.05); }
 
-/* ========================================================= */
-/* --- 6. DADOS (SANFONA E TABELA RESPONSIVA) --- */
-/* ========================================================= */
 .search-bar { position: relative; margin-bottom: 20px; }
 .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
-.search-bar input { padding-left: 40px; }
-
 .accordion-wrapper { display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px; }
 .acc-item { border: 1px solid var(--border); border-radius: 8px; background: #fff; overflow: hidden; }
 .acc-header { padding: 12px 10px; background: #f8fafc; font-weight: 700; font-size: 13px; color: var(--primary); display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
@@ -101,6 +89,7 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 .acc-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background: #fff; }
 .acc-item.active .acc-content { max-height: 2000px; padding: 0 !important; border-top: 1px solid var(--border); }
 
+/* TABELA DE HISTÓRICO */
 .hist-table-wrapper { width: 100%; overflow-x: auto; background: white; }
 .hist-table { width: 100%; border-collapse: collapse; font-size: 11.5px; text-align: center; border-left: none; border-right: none; }
 .hist-table th, .hist-table td { border: 1px solid #94a3b8; padding: 8px 3px; }
@@ -111,16 +100,13 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
 .row-total-hist td { background-color: var(--excel-header); font-weight: 700; color: var(--primary); border-top: 2px solid #22c55e !important; font-size: 11.5px; padding: 10px 3px !important; }
 
 /* ========================================================= */
-/* --- 7. EXPANSÃO: COMPUTADORES (TELAS MAIORES) --- */
+/* --- 6. EXPANSÃO: COMPUTADORES (TELAS MAIORES) --- */
 /* ========================================================= */
 @media (min-width: 800px) {
     .header-content { height: 70px; padding: 0 30px; gap: 15px; }
-    .logo-top { height: 45px; }
-    .app-title { font-size: 20px; }
-
+    .logo-top { height: 45px; } .app-title { font-size: 20px; }
     .footer-content { height: 80px; padding: 0 30px; }
-    .logo-bottom { height: 40px; }
-    .footer-spacer { width: 40px; }
+    .logo-bottom { height: 40px; } .footer-spacer { width: 40px; }
     .war-cry { font-size: 13px; letter-spacing: 2px; }
 
     .nav-tabs { margin: 20px auto 0; }
@@ -132,8 +118,8 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-font-
     .acc-item.active .acc-content { padding: 15px !important; }
     
     .hist-table { font-size: 15px; border-left: 1px solid #94a3b8; border-right: 1px solid #94a3b8; }
-    .hist-table th { font-size: 13px; padding: 14px 10px; }
-    .hist-table td { padding: 14px 10px; }
+    .hist-table th, .hist-table td { padding: 14px 10px; }
+    .hist-table th { font-size: 13px; }
     .td-area-hist { font-size: 15px; padding-left: 20px !important; }
     .td-turno-hist { font-size: 14px; }
     .row-total-hist td { font-size: 15px; padding: 16px 10px !important; }
