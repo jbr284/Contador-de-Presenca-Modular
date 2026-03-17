@@ -173,8 +173,28 @@ window.salvarTodosOsDados = async function() {
 }
 
 // =========================================================
-// O MOTOR DA ABA DADOS
+// O MOTOR DA ABA DADOS E ORDENAÇÃO CRONOLÓGICA
 // =========================================================
+
+// NOVA FUNÇÃO: Traduz o texto da semana em uma data matemática para ordenação
+function converterIdParaData(idString) {
+    const mesesMap = { "jan":0, "fev":1, "mar":2, "abr":3, "mai":4, "jun":5, "jul":6, "ago":7, "set":8, "out":9, "nov":10, "dez":11 };
+    
+    // Captura formatos como: "16 a 20 mar de 2026" ou "26 fev a 02 mar de 2026"
+    const regex = /(\d{2})\s(?:([a-zA-ZçÇ]{3})\s)?a\s(\d{2})\s([a-zA-ZçÇ]{3})\sde\s(\d{4})/i;
+    const match = idString.match(regex);
+
+    if (match) {
+        const dia = parseInt(match[3], 10); // Usa o dia de sexta-feira para orientar
+        const mesStr = match[4].toLowerCase();
+        const ano = parseInt(match[5], 10);
+        const mes = mesesMap[mesStr] !== undefined ? mesesMap[mesStr] : 0;
+        
+        // Retorna a representação numérica da data para o robô classificar
+        return new Date(ano, mes, dia).getTime();
+    }
+    return 0; // Fallback de segurança
+}
 
 window.carregarHistoricoNuvem = async function() {
     const container = document.getElementById('accordion-container');
@@ -192,7 +212,9 @@ window.carregarHistoricoNuvem = async function() {
             });
         });
 
-        historicoCompleto.sort((a, b) => new Date(b.atualizado) - new Date(a.atualizado));
+        // A MÁGICA ACONTECE AQUI: Ordena do maior (mais recente) para o menor (mais antigo)
+        historicoCompleto.sort((a, b) => converterIdParaData(b.id) - converterIdParaData(a.id));
+
         renderizarSanfona(''); 
     } catch (error) {
         console.error("Erro ao puxar histórico:", error);
