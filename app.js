@@ -200,7 +200,6 @@ function renderizarSanfona(termoBusca) {
         accHeader.innerHTML = `<span><i class="fa-regular fa-calendar-check" style="margin-right:8px;"></i> ${item.id}</span> <i class="fa-solid fa-chevron-down acc-icon"></i>`;
         const accContent = document.createElement('div'); accContent.className = 'acc-content';
         
-        // Chama a NOVA função de Cards Responsivos
         accContent.innerHTML = gerarHTMLCardsResponsivos(item.dados, item.resumo); 
 
         accHeader.onclick = () => { accItem.classList.toggle('active'); };
@@ -208,9 +207,6 @@ function renderizarSanfona(termoBusca) {
     });
 }
 
-// =========================================================================
-// NOVA ARQUITETURA MOBILE-FIRST PARA O HISTÓRICO (ADEUS TABELA!)
-// =========================================================================
 function gerarHTMLCardsResponsivos(dadosDaSemana, textoResumo) {
     let totaisDias = [0, 0, 0, 0, 0]; 
     let totalGeralSemana = 0;
@@ -229,7 +225,6 @@ function gerarHTMLCardsResponsivos(dadosDaSemana, textoResumo) {
                 let somaLinha = 0; 
                 let cellsHtml = '';
                 
-                // Monta as 5 caixinhas dos dias
                 linha.dias.forEach((val, i) => {
                     let num = val === "" ? 0 : parseInt(val);
                     somaLinha += num; 
@@ -243,7 +238,6 @@ function gerarHTMLCardsResponsivos(dadosDaSemana, textoResumo) {
                 
                 totalGeralSemana += somaLinha;
 
-                // Monta a caixinha do Total do Turno
                 cellsHtml += `
                     <div style="display: flex; flex-direction: column; align-items: center; background: #eff6ff; padding: 6px 2px; border-radius: 6px; border: 1px solid #bfdbfe;">
                         <span style="font-size: 0.65rem; font-weight: 700; color: var(--primary-dark); text-transform: uppercase;">Tot</span>
@@ -262,7 +256,6 @@ function gerarHTMLCardsResponsivos(dadosDaSemana, textoResumo) {
         html += `</div>`;
     });
 
-    // CARD DE TOTALIZADOR GERAL DA SEMANA
     html += `
     <div style="border: 2px solid var(--primary-dark); border-radius: 8px; overflow: hidden; margin-top: 0.5rem;">
         <div style="background: var(--primary-dark); padding: 10px; font-weight: 700; color: white; text-align: center; font-size: 0.9rem;">TOTAL GERAL DA SEMANA</div>
@@ -288,18 +281,21 @@ function gerarHTMLCardsResponsivos(dadosDaSemana, textoResumo) {
 
     html += `</div>`;
 
+    // ========================================================
+    // NOVO: RESUMO EM FORMATO DE SANFONA (DETAILS/SUMMARY)
+    // ========================================================
     if (textoResumo) {
         html += `
-        <div style="margin-top: 1.5rem; padding: 15px; background: #f8fafc; border-left: 4px solid var(--primary); border-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-            <div style="font-weight: bold; color: var(--brand-dark); margin-bottom: 8px;"><i class="fa-solid fa-align-left"></i> Resumo da Semana:</div>
-            <div style="white-space: pre-wrap; font-size: 0.9rem; color: var(--text-main); line-height: 1.5;">${textoResumo}</div>
-        </div>`;
+        <details style="margin-top: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--primary); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <summary style="padding: 12px 15px; font-weight: 700; color: var(--brand-dark); cursor: pointer; outline: none;">
+                <i class="fa-solid fa-align-left" style="color: var(--primary); margin-right: 8px;"></i> Resumo Gerencial da Semana <span style="font-size: 0.8rem; color: var(--text-light); font-weight: 500; margin-left: 5px;">(Toque para ler)</span>
+            </summary>
+            <div style="padding: 15px; border-top: 1px solid var(--border); white-space: pre-wrap; font-size: 0.95rem; color: var(--text-main); line-height: 1.6; background: #f8fafc;">${textoResumo}</div>
+        </details>`;
     }
     
     return html;
 }
-
-// =========================================================================
 
 window.gerarExcelMestre = async function() {
     const termo = document.getElementById('input-busca').value;
