@@ -137,7 +137,7 @@
                 <h3 style="margin-top: 0; margin-bottom: 1rem; color: var(--text-main); font-size: 1rem; display: flex; align-items: center; gap: 8px;">
                     <i class="fa-solid fa-align-left" style="color: var(--primary);"></i> Resumo Gerencial da Semana
                 </h3>
-                <textarea id="texto-resumo" rows="6" placeholder="Cole ou digite o resumo da semana aqui. Ele será anexado ao histórico e exportado como um caderno de notas na planilha do Excel..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); font-family: 'Inter', sans-serif; font-size: 0.95rem; resize: vertical; outline: none; transition: border 0.2s;"></textarea>
+                <textarea id="texto-resumo" onpaste="setTimeout(() => window.processarDataResumo(document.getElementById('texto-resumo').value), 100)" rows="6" placeholder="Cole ou digite o resumo da semana aqui. Ele será anexado ao histórico e exportado como um caderno de notas na planilha do Excel..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); font-family: 'Inter', sans-serif; font-size: 0.95rem; resize: vertical; outline: none; transition: border 0.2s;"></textarea>
             </div>
 
             <button id="btn-save" class="btn btn-primary" onclick="salvarTodosOsDados()"><i class="fa-solid fa-cloud-arrow-up"></i> Guardar Lançamentos da Semana</button>
