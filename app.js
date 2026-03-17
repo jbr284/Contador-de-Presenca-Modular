@@ -132,7 +132,6 @@ window.salvarTodosOsDados = async function() {
     });
 
     const textoResumoEl = document.getElementById('texto-resumo');
-    // Dupla proteção: se o usuário digitar os símbolos, eles também são removidos ao salvar
     const textoResumo = textoResumoEl ? textoResumoEl.value.replace(/[*_~]/g, '').trim() : "";
 
     try {
@@ -200,6 +199,8 @@ function renderizarSanfona(termoBusca) {
         const accHeader = document.createElement('div'); accHeader.className = 'acc-header';
         accHeader.innerHTML = `<span><i class="fa-regular fa-calendar-check" style="margin-right:8px;"></i> ${item.id}</span> <i class="fa-solid fa-chevron-down acc-icon"></i>`;
         const accContent = document.createElement('div'); accContent.className = 'acc-content';
+        
+        // Chama a NOVA função de Cards Responsivos
         accContent.innerHTML = gerarHTMLCardsResponsivos(item.dados, item.resumo); 
 
         accHeader.onclick = () => { accItem.classList.toggle('active'); };
@@ -207,47 +208,98 @@ function renderizarSanfona(termoBusca) {
     });
 }
 
+// =========================================================================
+// NOVA ARQUITETURA MOBILE-FIRST PARA O HISTÓRICO (ADEUS TABELA!)
+// =========================================================================
 function gerarHTMLCardsResponsivos(dadosDaSemana, textoResumo) {
-    let totaisDias = [0, 0, 0, 0, 0]; let totalGeralSemana = 0;
-    let html = `
-    <div class="hist-table-wrapper">
-        <table class="hist-table">
-            <thead><tr><th>Área</th><th>Turno</th><th>seg</th><th>ter</th><th>qua</th><th>qui</th><th>sex</th><th>Total</th></tr></thead>
-            <tbody>`;
+    let totaisDias = [0, 0, 0, 0, 0]; 
+    let totalGeralSemana = 0;
+    
+    let html = `<div style="display: flex; flex-direction: column; gap: 1rem;">`;
+    const areas = ['Fabricação', 'Estrutural', 'Mont. Final', 'Painéis'];
+    const diasNomes = ['seg', 'ter', 'qua', 'qui', 'sex'];
 
-    dadosDaSemana.forEach((linha, index) => {
-        let somaLinha = 0; let colunasDias = '';
-        linha.dias.forEach((val, i) => {
-            let num = val === "" ? 0 : parseInt(val);
-            somaLinha += num; totaisDias[i] += num;
-            colunasDias += `<td>${val}</td>`;
+    areas.forEach(nomeArea => {
+        html += `<div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">`;
+        html += `<div style="background: #f8fafc; padding: 10px 15px; font-weight: 700; color: var(--text-main); border-bottom: 1px solid var(--border);"><i class="fa-solid fa-layer-group" style="color: var(--primary); margin-right: 8px;"></i>${nomeArea}</div>`;
+        
+        ['1º', '2º'].forEach(nomeTurno => {
+            const linha = dadosDaSemana.find(d => d.area === nomeArea && d.turno === nomeTurno);
+            if(linha) {
+                let somaLinha = 0; 
+                let cellsHtml = '';
+                
+                // Monta as 5 caixinhas dos dias
+                linha.dias.forEach((val, i) => {
+                    let num = val === "" ? 0 : parseInt(val);
+                    somaLinha += num; 
+                    totaisDias[i] += num;
+                    cellsHtml += `
+                    <div style="display: flex; flex-direction: column; align-items: center; background: #ffffff; padding: 6px 2px; border-radius: 6px; border: 1px solid var(--border);">
+                        <span style="font-size: 0.65rem; font-weight: 600; color: var(--text-light); text-transform: uppercase;">${diasNomes[i]}</span>
+                        <span style="font-weight: 700; color: var(--text-main); font-size: 1rem; margin-top: 2px;">${val === "" ? "-" : val}</span>
+                    </div>`;
+                });
+                
+                totalGeralSemana += somaLinha;
+
+                // Monta a caixinha do Total do Turno
+                cellsHtml += `
+                    <div style="display: flex; flex-direction: column; align-items: center; background: #eff6ff; padding: 6px 2px; border-radius: 6px; border: 1px solid #bfdbfe;">
+                        <span style="font-size: 0.65rem; font-weight: 700; color: var(--primary-dark); text-transform: uppercase;">Tot</span>
+                        <span style="font-weight: 700; color: var(--primary-dark); font-size: 1rem; margin-top: 2px;">${somaLinha}</span>
+                    </div>`;
+
+                html += `
+                <div style="padding: 10px 15px; border-bottom: 1px solid #f1f5f9;">
+                    <div style="font-weight: 600; font-size: 0.8rem; color: var(--text-light); margin-bottom: 8px;">${nomeTurno} TURNO</div>
+                    <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px;">
+                        ${cellsHtml}
+                    </div>
+                </div>`;
+            }
         });
-        totalGeralSemana += somaLinha;
-        html += `<tr>`;
-        if (index % 2 === 0) html += `<td rowspan="2" class="td-area-hist">${linha.area}</td>`;
-        html += `<td class="td-turno-hist">${linha.turno} T</td>${colunasDias}<td class="td-total-hist">${somaLinha}</td></tr>`;
+        html += `</div>`;
     });
 
+    // CARD DE TOTALIZADOR GERAL DA SEMANA
     html += `
-            </tbody>
-            <tfoot>
-                <tr class="row-total-hist">
-                    <td colspan="2" style="text-align: right; padding-right: 15px;">TOTAL GERAL</td>
-                    <td>${totaisDias[0]}</td><td>${totaisDias[1]}</td><td>${totaisDias[2]}</td><td>${totaisDias[3]}</td><td>${totaisDias[4]}</td><td>${totalGeralSemana}</td>
-                </tr>
-            </tfoot>
-        </table>
+    <div style="border: 2px solid var(--primary-dark); border-radius: 8px; overflow: hidden; margin-top: 0.5rem;">
+        <div style="background: var(--primary-dark); padding: 10px; font-weight: 700; color: white; text-align: center; font-size: 0.9rem;">TOTAL GERAL DA SEMANA</div>
+        <div style="padding: 10px 15px; background: #f8fafc;">
+            <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px;">`;
+    
+    for(let i=0; i<5; i++) {
+        html += `
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <span style="font-size: 0.65rem; font-weight: 600; color: var(--text-light); text-transform: uppercase;">${diasNomes[i]}</span>
+                    <span style="font-weight: 700; color: var(--text-main); font-size: 1.1rem;">${totaisDias[i]}</span>
+                </div>`;
+    }
+    
+    html += `
+                <div style="display: flex; flex-direction: column; align-items: center; background: var(--primary); border-radius: 6px; padding: 4px 0;">
+                    <span style="font-size: 0.65rem; font-weight: 700; color: #e0e7ff; text-transform: uppercase;">Total</span>
+                    <span style="font-weight: 700; color: white; font-size: 1.1rem;">${totalGeralSemana}</span>
+                </div>
+            </div>
+        </div>
     </div>`;
+
+    html += `</div>`;
 
     if (textoResumo) {
         html += `
-        <div style="margin-top: 15px; padding: 15px; background: #f8fafc; border-left: 4px solid #2563eb; border-radius: 4px;">
-            <div style="font-weight: bold; color: #1e293b; margin-bottom: 8px;"><i class="fa-solid fa-align-left"></i> Resumo da Semana:</div>
-            <div style="white-space: pre-wrap; font-size: 0.9rem; color: #475569; line-height: 1.5;">${textoResumo}</div>
+        <div style="margin-top: 1.5rem; padding: 15px; background: #f8fafc; border-left: 4px solid var(--primary); border-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+            <div style="font-weight: bold; color: var(--brand-dark); margin-bottom: 8px;"><i class="fa-solid fa-align-left"></i> Resumo da Semana:</div>
+            <div style="white-space: pre-wrap; font-size: 0.9rem; color: var(--text-main); line-height: 1.5;">${textoResumo}</div>
         </div>`;
     }
+    
     return html;
 }
+
+// =========================================================================
 
 window.gerarExcelMestre = async function() {
     const termo = document.getElementById('input-busca').value;
@@ -418,15 +470,10 @@ window.lerMensagemWhatsApp = async function() {
     } catch (error) { alert("❌ Falha na injeção dos dados lidos para a tabela."); }
 };
 
-// --- MÁGICA: AUTO-DETECTAR DATA DO RESUMO E LIMPAR WHATSAPP ---
 window.processarDataResumo = async function(textoOriginal) {
-    // 1. Limpeza Imediata da Formatação do WhatsApp (* _ ~)
     const textoLimpo = textoOriginal.replace(/[*_~]/g, '');
-    
-    // Atualiza a caixa de texto instantaneamente na tela
     document.getElementById('texto-resumo').value = textoLimpo;
 
-    // 2. Continua com a detecção de data
     const trechoInicial = textoLimpo.substring(0, 100); 
     const regexBarra = /(\d{1,2})\/(\d{1,2})/;
     const regexExtenso = /(\d{1,2})\s*(?:de\s*)?-?\s*([a-zA-ZçÇ]{3,})/i;
@@ -460,12 +507,8 @@ window.processarDataResumo = async function(textoOriginal) {
         const inputData = document.getElementById('input-data');
         if (inputData.value !== novaDataStr) {
             inputData.value = novaDataStr;
-            
             alert(`✨ Data detectada no Resumo: ${diaF}/${mesF}.\nO sistema carregou a tabela correspondente para você!`);
-            
             await window.processarDataCalendario();
-            
-            // Restaura o texto limpo, pois o banco de dados carregou os números da semana
             document.getElementById('texto-resumo').value = textoLimpo;
         }
     }
