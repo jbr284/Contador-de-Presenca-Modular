@@ -1,21 +1,24 @@
-// --- IMPORTAÇÃO DO FIREBASE MODULAR ---
+// =========================================================
+// MODULAR | CONTADOR DE PRESENÇA (APP 1) - VERSÃO FINAL
+// =========================================================
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-// CHAVES DO PROJETO
+// --- 1. CONFIGURAÇÃO E INICIALIZAÇÃO ---
 const firebaseConfig = {
-  apiKey: "AIzaSyAZsg2GbxrgX70VZwPHiXkoFMCTt7i3_6U",
-  authDomain: "indicador-de-presenca-modular.firebaseapp.com",
-  projectId: "indicador-de-presenca-modular",
-  storageBucket: "indicador-de-presenca-modular.firebasestorage.app",
-  messagingSenderId: "895253390208",
-  appId: "1:895253390208:web:943f8679a0dbf36a531765"
+    apiKey: "AIzaSyAZsg2GbxrgX70VZwPHiXkoFMCTt7i3_6U",
+    authDomain: "indicador-de-presenca-modular.firebaseapp.com",
+    projectId: "indicador-de-presenca-modular",
+    storageBucket: "indicador-de-presenca-modular.firebasestorage.app",
+    messagingSenderId: "895253390208",
+    appId: "1:895253390208:web:943f8679a0dbf36a531765"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// --- VARIÁVEIS GLOBAIS DE ESTADO ---
+// --- 2. VARIÁVEIS GLOBAIS DE ESTADO ---
 let textoVerticalCalculado = ""; 
 let chaveBancoAtual = ""; 
 let dadosAtuais = []; 
@@ -23,17 +26,21 @@ let historicoCompleto = [];
 
 const COLECAO_BD = "contador_de_presenca";
 
-// Retorna a matriz limpa
+// Estrutura matriz de dados vazia
 function getEstruturaZerada() {
     return [
-        { area: 'Fabricação', turno: '1º', dias: ['','','','',''] }, { area: 'Fabricação', turno: '2º', dias: ['','','','',''] },
-        { area: 'Estrutural', turno: '1º', dias: ['','','','',''] }, { area: 'Estrutural', turno: '2º', dias: ['','','','',''] },
-        { area: 'Mont. Final', turno: '1º', dias: ['','','','',''] }, { area: 'Mont. Final', turno: '2º', dias: ['','','','',''] },
-        { area: 'Painéis', turno: '1º', dias: ['','','','',''] }, { area: 'Painéis', turno: '2º', dias: ['','','','',''] }
+        { area: 'Fabricação', turno: '1º', dias: ['','','','',''] }, 
+        { area: 'Fabricação', turno: '2º', dias: ['','','','',''] },
+        { area: 'Estrutural', turno: '1º', dias: ['','','','',''] }, 
+        { area: 'Estrutural', turno: '2º', dias: ['','','','',''] },
+        { area: 'Mont. Final', turno: '1º', dias: ['','','','',''] }, 
+        { area: 'Mont. Final', turno: '2º', dias: ['','','','',''] },
+        { area: 'Painéis', turno: '1º', dias: ['','','','',''] }, 
+        { area: 'Painéis', turno: '2º', dias: ['','','','',''] }
     ];
 }
 
-// --- NAVEGAÇÃO ENTRE ABAS ---
+// --- 3. CONTROLES DE INTERFACE (UI) ---
 window.mudarAba = function(abaDestino) {
     document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-pane').forEach(c => c.classList.remove('active'));
@@ -41,38 +48,36 @@ window.mudarAba = function(abaDestino) {
     document.getElementById(`tab-btn-${abaDestino}`).classList.add('active');
     document.getElementById(`aba-${abaDestino}`).classList.add('active');
 
-    if(abaDestino === 'dados') { 
+    if (abaDestino === 'dados') { 
         carregarHistoricoNuvem(); 
     }
 }
 
-// --- INTELIGÊNCIA DO CALENDÁRIO ---
+// --- 4. LÓGICA DE CALENDÁRIO E BANCO DE DADOS ---
 window.processarDataCalendario = async function() {
     const dateStr = document.getElementById('input-data').value;
     if (!dateStr) return;
 
     const dataSelecionada = new Date(dateStr + 'T12:00:00'); 
     const diaDaSemana = dataSelecionada.getDay(); 
-    
     const diffParaSegunda = diaDaSemana === 0 ? -6 : 1 - diaDaSemana;
+    
     const segundaFeira = new Date(dataSelecionada);
     segundaFeira.setDate(dataSelecionada.getDate() + diffParaSegunda);
-
+    
     const sextaFeira = new Date(segundaFeira);
     sextaFeira.setDate(segundaFeira.getDate() + 4);
 
     const mesesSiglas = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
-
     const diaSeg = String(segundaFeira.getDate()).padStart(2, '0');
     const mesSeg = mesesSiglas[segundaFeira.getMonth()];
     const anoSeg = segundaFeira.getFullYear();
-
     const diaSex = String(sextaFeira.getDate()).padStart(2, '0');
     const mesSex = mesesSiglas[sextaFeira.getMonth()];
 
-    if (mesSeg === mesSex) {
-        textoVerticalCalculado = `${diaSeg} a ${diaSex} ${mesSeg}`;
-    } else {
+    if (mesSeg === mesSex) { 
+        textoVerticalCalculado = `${diaSeg} a ${diaSex} ${mesSeg}`; 
+    } else { 
         textoVerticalCalculado = `${diaSeg} ${mesSeg} a ${diaSex} ${mesSex}`; 
     }
 
@@ -85,22 +90,25 @@ window.processarDataCalendario = async function() {
         const docRef = doc(db, COLECAO_BD, chaveBancoAtual);
         const docSnap = await getDoc(docRef);
 
+        const textoResumoEl = document.getElementById('texto-resumo');
+
         if (docSnap.exists()) {
             dadosAtuais = docSnap.data().dados;
+            if(textoResumoEl) textoResumoEl.value = docSnap.data().resumo || "";
         } else {
             dadosAtuais = getEstruturaZerada();
+            if(textoResumoEl) textoResumoEl.value = "";
         }
 
         displaySemana.innerHTML = `<i class="fa-regular fa-calendar-check" style="margin-right:8px;"></i> ${textoVerticalCalculado}`;
         renderizarFormularioLote();
 
     } catch (error) {
-        console.error("Erro ao puxar dados do Firebase:", error);
-        displaySemana.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="margin-right:8px; color: red;"></i> Erro de conexão. Verifique a internet.`;
+        console.error("Erro de conexão com Firebase:", error);
+        displaySemana.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color: red;"></i> Falha de conexão. Verifique sua rede.`;
     }
 }
 
-// --- RENDERIZA O FORMULÁRIO NA TELA ---
 function renderizarFormularioLote() {
     const container = document.getElementById('form-areas');
     container.innerHTML = '';
@@ -114,7 +122,6 @@ function renderizarFormularioLote() {
         ['1º', '2º'].forEach(nomeTurno => {
             const indexBD = dadosAtuais.findIndex(d => d.area === nomeArea && d.turno === nomeTurno);
             const valores = dadosAtuais[indexBD].dias;
-            
             htmlInterno += `
             <div class="shift-row">
                 <div class="shift-label">${nomeTurno} T</div>
@@ -127,28 +134,32 @@ function renderizarFormularioLote() {
                 </div>
             </div>`;
         });
-        card.innerHTML = htmlInterno;
+        card.innerHTML = htmlInterno; 
         container.appendChild(card);
     });
 }
 
-// --- SALVA OS DADOS NO FIREBASE ---
 window.salvarTodosOsDados = async function() {
     const btn = document.getElementById('btn-save');
     const originalHtml = btn.innerHTML;
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Sincronizando...`;
     
-    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Sincronizando com a Nuvem...`;
-    
+    // Coleta as matrizes
     dadosAtuais.forEach((linha, indexBD) => {
-        for(let i=0; i<5; i++) {
+        for (let i = 0; i < 5; i++) {
             let valorDigitado = document.getElementById(`in-${indexBD}-${i}`).value;
             linha.dias[i] = valorDigitado === "" ? "" : parseInt(valorDigitado);
         }
     });
 
+    // Coleta o texto do resumo (se o elemento existir na tela)
+    const textoResumoEl = document.getElementById('texto-resumo');
+    const textoResumo = textoResumoEl ? textoResumoEl.value.trim() : "";
+
     try {
         await setDoc(doc(db, COLECAO_BD, chaveBancoAtual), {
             dados: dadosAtuais,
+            resumo: textoResumo,
             ultimaAtualizacao: new Date().toISOString()
         });
 
@@ -162,8 +173,8 @@ window.salvarTodosOsDados = async function() {
         }, 1200);
 
     } catch (error) {
-        console.error("Erro ao gravar no Firebase: ", error);
-        btn.innerHTML = `<i class="fa-solid fa-xmark"></i> Falha ao Salvar. Tente de novo.`;
+        console.error("Erro na gravação:", error);
+        btn.innerHTML = `<i class="fa-solid fa-xmark"></i> Falha Crítica.`;
         btn.style.backgroundColor = '#dc2626'; 
         setTimeout(() => { 
             btn.innerHTML = originalHtml; 
@@ -172,28 +183,20 @@ window.salvarTodosOsDados = async function() {
     }
 }
 
-// =========================================================
-// O MOTOR DA ABA DADOS E ORDENAÇÃO CRONOLÓGICA
-// =========================================================
-
-// NOVA FUNÇÃO: Traduz o texto da semana em uma data matemática para ordenação
+// --- 5. ORDENAÇÃO E HISTÓRICO (ABA DADOS) ---
 function converterIdParaData(idString) {
     const mesesMap = { "jan":0, "fev":1, "mar":2, "abr":3, "mai":4, "jun":5, "jul":6, "ago":7, "set":8, "out":9, "nov":10, "dez":11 };
-    
-    // Captura formatos como: "16 a 20 mar de 2026" ou "26 fev a 02 mar de 2026"
     const regex = /(\d{2})\s(?:([a-zA-ZçÇ]{3})\s)?a\s(\d{2})\s([a-zA-ZçÇ]{3})\sde\s(\d{4})/i;
     const match = idString.match(regex);
-
+    
     if (match) {
-        const dia = parseInt(match[3], 10); // Usa o dia de sexta-feira para orientar
+        const dia = parseInt(match[3], 10);
         const mesStr = match[4].toLowerCase();
         const ano = parseInt(match[5], 10);
-        const mes = mesesMap[mesStr] !== undefined ? mesesMap[mesStr] : 0;
-        
-        // Retorna a representação numérica da data para o robô classificar
-        return new Date(ano, mes, dia).getTime();
+        const mesConvertido = mesesMap[mesStr] !== undefined ? mesesMap[mesStr] : 0;
+        return new Date(ano, mesConvertido, dia).getTime();
     }
-    return 0; // Fallback de segurança
+    return 0; 
 }
 
 window.carregarHistoricoNuvem = async function() {
@@ -208,17 +211,18 @@ window.carregarHistoricoNuvem = async function() {
             historicoCompleto.push({
                 id: doc.id, 
                 dados: doc.data().dados,
+                resumo: doc.data().resumo || "", 
                 atualizado: doc.data().ultimaAtualizacao
             });
         });
 
-        // A MÁGICA ACONTECE AQUI: Ordena do maior (mais recente) para o menor (mais antigo)
+        // Ordenação cronológica garantida
         historicoCompleto.sort((a, b) => converterIdParaData(b.id) - converterIdParaData(a.id));
-
         renderizarSanfona(''); 
+
     } catch (error) {
         console.error("Erro ao puxar histórico:", error);
-        container.innerHTML = `<div style="color:red; text-align:center;">Erro ao carregar os dados.</div>`;
+        container.innerHTML = `<div style="color:red; text-align:center;">Erro ao carregar o histórico.</div>`;
     }
 }
 
@@ -234,7 +238,7 @@ function renderizarSanfona(termoBusca) {
     const filtrados = historicoCompleto.filter(item => item.id.toLowerCase().includes(termoBusca.toLowerCase()));
 
     if (filtrados.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:15px; color:#64748b;">Nenhuma semana encontrada.</div>`;
+        container.innerHTML = `<div style="text-align:center; padding:15px; color:#64748b;">Nenhum registro encontrado.</div>`;
         return;
     }
 
@@ -248,17 +252,16 @@ function renderizarSanfona(termoBusca) {
         
         const accContent = document.createElement('div');
         accContent.className = 'acc-content';
-        accContent.innerHTML = gerarHTMLCardsResponsivos(item.dados);
+        accContent.innerHTML = gerarHTMLCardsResponsivos(item.dados, item.resumo); 
 
         accHeader.onclick = () => { accItem.classList.toggle('active'); };
-
-        accItem.appendChild(accHeader);
+        accItem.appendChild(accHeader); 
         accItem.appendChild(accContent);
         container.appendChild(accItem);
     });
 }
 
-function gerarHTMLCardsResponsivos(dadosDaSemana) {
+function gerarHTMLCardsResponsivos(dadosDaSemana, textoResumo) {
     let totaisDias = [0, 0, 0, 0, 0];
     let totalGeralSemana = 0;
 
@@ -267,39 +270,29 @@ function gerarHTMLCardsResponsivos(dadosDaSemana) {
         <table class="hist-table">
             <thead>
                 <tr>
-                    <th>Área</th>
-                    <th>Turno</th>
-                    <th>seg</th><th>ter</th><th>qua</th><th>qui</th><th>sex</th>
-                    <th>Total</th>
+                    <th>Área</th><th>Turno</th><th>seg</th><th>ter</th><th>qua</th><th>qui</th><th>sex</th><th>Total</th>
                 </tr>
             </thead>
-            <tbody>
-    `;
+            <tbody>`;
 
     dadosDaSemana.forEach((linha, index) => {
-        let somaLinha = 0;
+        let somaLinha = 0; 
         let colunasDias = '';
-
+        
         linha.dias.forEach((val, i) => {
             let num = val === "" ? 0 : parseInt(val);
-            somaLinha += num;
+            somaLinha += num; 
             totaisDias[i] += num;
             colunasDias += `<td>${val}</td>`;
         });
-
-        totalGeralSemana += somaLinha;
-
-        html += `<tr>`;
         
+        totalGeralSemana += somaLinha;
+        
+        html += `<tr>`;
         if (index % 2 === 0) {
             html += `<td rowspan="2" class="td-area-hist">${linha.area}</td>`;
         }
-        
-        html += `
-            <td class="td-turno-hist">${linha.turno} T</td>
-            ${colunasDias}
-            <td class="td-total-hist">${somaLinha}</td>
-        </tr>`;
+        html += `<td class="td-turno-hist">${linha.turno} T</td>${colunasDias}<td class="td-total-hist">${somaLinha}</td></tr>`;
     });
 
     html += `
@@ -307,31 +300,30 @@ function gerarHTMLCardsResponsivos(dadosDaSemana) {
             <tfoot>
                 <tr class="row-total-hist">
                     <td colspan="2" style="text-align: right; padding-right: 15px;">TOTAL GERAL</td>
-                    <td>${totaisDias[0]}</td>
-                    <td>${totaisDias[1]}</td>
-                    <td>${totaisDias[2]}</td>
-                    <td>${totaisDias[3]}</td>
-                    <td>${totaisDias[4]}</td>
-                    <td>${totalGeralSemana}</td>
+                    <td>${totaisDias[0]}</td><td>${totaisDias[1]}</td><td>${totaisDias[2]}</td><td>${totaisDias[3]}</td><td>${totaisDias[4]}</td><td>${totalGeralSemana}</td>
                 </tr>
             </tfoot>
         </table>
     </div>`;
 
+    if (textoResumo) {
+        html += `
+        <div style="margin-top: 15px; padding: 15px; background: #f8fafc; border-left: 4px solid #2563eb; border-radius: 4px;">
+            <div style="font-weight: bold; color: #1e293b; margin-bottom: 8px;"><i class="fa-solid fa-align-left"></i> Resumo da Semana:</div>
+            <div style="white-space: pre-wrap; font-size: 0.9rem; color: #475569; line-height: 1.5;">${textoResumo}</div>
+        </div>`;
+    }
+
     return html;
 }
 
-// =========================================================
-// EXPORTAÇÃO MESTRE NO EXCEL
-// =========================================================
+// --- 6. EXPORTAÇÃO EXCELJS MESTRE ---
 window.gerarExcelMestre = async function() {
     const termo = document.getElementById('input-busca').value;
-    
     const filtrados = historicoCompleto.filter(item => item.id.toLowerCase().includes(termo.toLowerCase()));
 
     if (filtrados.length === 0) {
-        alert("Não existem dados para exportar com este filtro.");
-        return;
+        return alert("Não existem dados para exportar com este filtro.");
     }
 
     const btn = document.querySelector('.btn-excel');
@@ -340,28 +332,32 @@ window.gerarExcelMestre = async function() {
 
     try {
         const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet('Histórico');
+        const worksheet = workbook.addWorksheet('Histórico Modular');
 
         worksheet.columns = [
-            { key: 'semana', width: 8 }, { key: 'area', width: 16 }, { key: 'turno', width: 8 },
-            { key: 's1', width: 6 }, { key: 't', width: 6 }, { key: 'q1', width: 6 }, { key: 'q2', width: 6 }, { key: 's2', width: 6 }, { key: 'total', width: 8 }
+            { key: 'semana', width: 10 }, { key: 'area', width: 16 }, { key: 'turno', width: 10 },
+            { key: 's1', width: 8 }, { key: 't', width: 8 }, { key: 'q1', width: 8 }, 
+            { key: 'q2', width: 8 }, { key: 's2', width: 8 }, { key: 'total', width: 10 }
         ];
 
         let linhaInicial = 1; 
+        const borderStyle = { style: 'thick', color: { argb: 'FF000000' } };
+        const thinBorder = { style: 'thin', color: { argb: 'FF000000' } };
 
         filtrados.forEach((item) => {
             
+            // CABEÇALHO
             const cabecalho = worksheet.getRow(linhaInicial);
             cabecalho.values = ['Semana', 'Área', 'Turno', 'seg', 'ter', 'qua', 'qui', 'sex', 'Total'];
             cabecalho.font = { bold: true }; 
             cabecalho.alignment = { vertical: 'middle', horizontal: 'center' };
 
+            // LINHAS DE DADOS E FÓRMULAS
             item.dados.forEach((linhaData, i) => {
                 const rIndex = linhaInicial + 1 + i; 
                 const row = worksheet.getRow(rIndex);
                 
                 row.getCell('C').value = linhaData.turno + ' T';
-                
                 row.getCell('D').value = linhaData.dias[0] === "" ? null : linhaData.dias[0]; 
                 row.getCell('E').value = linhaData.dias[1] === "" ? null : linhaData.dias[1]; 
                 row.getCell('F').value = linhaData.dias[2] === "" ? null : linhaData.dias[2];
@@ -373,19 +369,21 @@ window.gerarExcelMestre = async function() {
                 row.alignment = { vertical: 'middle', horizontal: 'center' };
             });
 
+            // RODAPÉ TOTALIZADOR
             const linhaFinal = linhaInicial + 9;
             const totalRow = worksheet.getRow(linhaFinal);
             totalRow.getCell('C').value = 'Total';
-            
             totalRow.getCell('D').value = { formula: `SUM(D${linhaInicial+1}:D${linhaInicial+8})` }; 
             totalRow.getCell('E').value = { formula: `SUM(E${linhaInicial+1}:E${linhaInicial+8})` };
             totalRow.getCell('F').value = { formula: `SUM(F${linhaInicial+1}:F${linhaInicial+8})` }; 
             totalRow.getCell('G').value = { formula: `SUM(G${linhaInicial+1}:G${linhaInicial+8})` };
             totalRow.getCell('H').value = { formula: `SUM(H${linhaInicial+1}:H${linhaInicial+8})` }; 
             totalRow.getCell('I').value = { formula: `SUM(I${linhaInicial+1}:I${linhaInicial+8})` }; 
+            
             totalRow.font = { bold: true }; 
             totalRow.alignment = { vertical: 'middle', horizontal: 'center' };
 
+            // MESCLAGENS (MERGE) E BORDAS DA TABELA
             worksheet.mergeCells(`A${linhaInicial+1}:A${linhaInicial+8}`);
             const cellSemana = worksheet.getCell(`A${linhaInicial+1}`);
             cellSemana.value = item.id.split(' de ')[0].replace(' a ', '\n a \n'); 
@@ -396,23 +394,20 @@ window.gerarExcelMestre = async function() {
             worksheet.mergeCells(`B${linhaInicial+5}:B${linhaInicial+6}`); worksheet.getCell(`B${linhaInicial+5}`).value = 'Mont. Final';
             worksheet.mergeCells(`B${linhaInicial+7}:B${linhaInicial+8}`); worksheet.getCell(`B${linhaInicial+7}`).value = 'Painéis';
             
-            [`B${linhaInicial+1}`, `B${linhaInicial+3}`, `B${linhaInicial+5}`, `B${linhaInicial+7}`].forEach(cel => {
-                worksheet.getCell(cel).alignment = { vertical: 'middle', horizontal: 'center' };
-                worksheet.getCell(cel).font = { bold: true };
+            [`B${linhaInicial+1}`, `B${linhaInicial+3}`, `B${linhaInicial+5}`, `B${linhaInicial+7}`].forEach(cel => { 
+                worksheet.getCell(cel).alignment = { vertical: 'middle', horizontal: 'center' }; 
+                worksheet.getCell(cel).font = { bold: true }; 
             });
-
+            
             worksheet.mergeCells(`A${linhaFinal}:C${linhaFinal}`); 
             worksheet.getCell(`A${linhaFinal}`).alignment = { vertical: 'middle', horizontal: 'right' };
 
-            const borderStyle = { style: 'thick', color: { argb: 'FF000000' } };
-            const thinBorder = { style: 'thin', color: { argb: 'FF000000' } };
-
-            for (let r = linhaInicial; r <= linhaFinal; r++) {
+            // APLICANDO BORDAS DA TABELA
+            for (let r = linhaInicial; r <= linhaFinal; r++) { 
                 for (let c = 1; c <= 9; c++) { 
                     worksheet.getCell(r, c).border = { top: thinBorder, left: thinBorder, bottom: thinBorder, right: thinBorder }; 
-                }
+                } 
             }
-            
             worksheet.eachRow((row, rowNumber) => {
                 if(rowNumber >= linhaInicial && rowNumber <= linhaFinal) {
                     row.getCell(1).border.left = borderStyle; 
@@ -427,49 +422,75 @@ window.gerarExcelMestre = async function() {
                     }
                 }
             });
-            for(let i=1; i<=8; i++) { 
+            for(let i = 1; i <= 8; i++) { 
                 worksheet.getCell(`I${linhaInicial+i}`).border.left = borderStyle; 
                 worksheet.getCell(`I${linhaInicial+i}`).border.right = borderStyle; 
             }
 
-            linhaInicial += 11;
+            // --- INSERÇÃO DO RESUMO GERENCIAL (Folha de Caderno) ---
+            let saltoProximaTabela = 12; // Pulo padrão se não houver texto
+
+            if (item.resumo) {
+                const linhaResumo = linhaFinal + 2; 
+                const linhaResumoFim = linhaResumo + 6; 
+                
+                worksheet.mergeCells(`A${linhaResumo}:I${linhaResumoFim}`);
+                
+                const cellR = worksheet.getCell(`A${linhaResumo}`);
+                cellR.value = "📝 RESUMO GERENCIAL DA SEMANA:\n\n" + item.resumo;
+                cellR.alignment = { vertical: 'top', horizontal: 'left', wrapText: true, indent: 1 };
+                cellR.font = { name: 'Arial', size: 10, italic: true, color: { argb: 'FF333333' } };
+                
+                for(let r = linhaResumo; r <= linhaResumoFim; r++) {
+                    for(let c = 1; c <= 9; c++) {
+                        let b = { top: thinBorder, left: thinBorder, bottom: thinBorder, right: thinBorder };
+                        if(r === linhaResumo) b.top = borderStyle;
+                        if(r === linhaResumoFim) b.bottom = borderStyle;
+                        if(c === 1) b.left = borderStyle;
+                        if(c === 9) b.right = borderStyle;
+                        worksheet.getCell(r, c).border = b;
+                    }
+                }
+                
+                saltoProximaTabela = 12 + 8; // Pulo expandido para acomodar o texto
+            }
+
+            linhaInicial += saltoProximaTabela;
         });
 
+        // GERAÇÃO E DOWNLOAD
         const buffer = await workbook.xlsx.writeBuffer();
         const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         
-        let nomeArquivo = termo === "" ? "Historico_Completo_Producao.xlsx" : `Historico_Producao_${termo}.xlsx`;
+        const dataHoje = new Date().toISOString().split('T')[0];
+        let nomeArquivo = termo === "" ? `Contador_Modular_Export_${dataHoje}.xlsx` : `Contador_Modular_Filtro_${termo}.xlsx`;
         saveAs(blob, nomeArquivo);
 
     } catch (err) {
-        console.error("Erro ao gerar o Excel Mestre:", err);
+        console.error("Falha Crítica no Excel:", err);
         alert("Ocorreu um erro ao gerar a planilha Excel.");
     } finally {
         btn.innerHTML = textoOriginal;
     }
 }
 
-// --- INICIA O SISTEMA ASSIM QUE O SCRIPT CARREGAR ---
+// --- 7. AUTO-INICIALIZAÇÃO DO SISTEMA ---
 const inputData = document.getElementById('input-data');
 const hoje = new Date();
 inputData.value = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')}`;
 processarDataCalendario();
 
-
-// =========================================================
-// --- MÓDULO INTELIGENTE: LEITURA E PREENCHIMENTO AUTOMÁTICO
-// =========================================================
+// --- 8. MOTOR DE INTELIGÊNCIA ARTIFICIAL: PARSER DO WHATSAPP ---
 window.lerMensagemWhatsApp = async function() {
     const inputTexto = document.getElementById('texto-whatsapp');
     const texto = inputTexto.value;
     
     if (!texto || texto.trim() === '') {
-        alert("⚠️ Por favor, cole a mensagem padrão do supervisor na caixa de texto primeiro.");
+        alert("⚠️ Cole a mensagem padrão do WhatsApp primeiro.");
         return;
     }
 
-    // 1. EXTRAÇÃO DA DATA E IDENTIFICAÇÃO DO MÊS
-    let dia, mes;
+    let dia, mes; 
     const anoAtual = new Date().getFullYear();
 
     const regexBarra = /(\d{1,2})\/(\d{1,2})/; 
@@ -492,41 +513,36 @@ window.lerMensagemWhatsApp = async function() {
         };
         mes = mesesMap[nomeMes];
         if (mes === undefined) {
-            alert(`❌ Erro: Não consegui reconhecer o mês "${nomeMes}" na mensagem.`);
+            alert(`❌ Erro de Leitura: Mês "${nomeMes}" inválido.`);
             return;
         }
     } else {
-        alert("❌ Erro: Não encontrei uma data válida na mensagem (ex: 16/03 ou 13 de Março).");
+        alert("❌ Erro: Não encontrei uma data válida na mensagem (ex: 16/03).");
         return;
     }
 
-    // 2. DESCOBRE O DIA DA SEMANA
     const dataMensagem = new Date(anoAtual, mes, dia, 12, 0, 0);
     const diaDaSemana = dataMensagem.getDay(); 
 
     if (diaDaSemana === 0 || diaDaSemana === 6) {
-        alert(`⚠️ A data identificada (${dia}/${mes+1}) cai num Fim de Semana. O sistema só aceita lançamentos de Segunda a Sexta.`);
+        alert(`⚠️ O sistema não permite lançamentos em finais de semana.`);
         return;
     }
 
     const diaIndex = diaDaSemana - 1; 
-    const diasNomes = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
-
-    // 3. ATUALIZAR O SISTEMA E O BANCO DE DADOS
     const mesFormatado = String(mes + 1).padStart(2, '0');
     const diaFormatado = String(dia).padStart(2, '0');
     
     document.getElementById('input-data').value = `${anoAtual}-${mesFormatado}-${diaFormatado}`;
     
-    // O await força o JavaScript a pausar e esperar a tabela renderizar na tela
+    // Aguarda o sistema desenhar a tabela vazia da semana
     await window.processarDataCalendario();
 
-    // 4. EXTRAÇÃO DOS DADOS DE PRODUÇÃO
     const turnoMatch = texto.match(/(1|2)[º°oO]?\s*turno/i);
     const turno = turnoMatch ? turnoMatch[1] : null;
 
     if (!turno) {
-        alert("❌ Erro de Leitura: Não consegui identificar o turno no cabeçalho da mensagem.");
+        alert("❌ Erro de Leitura: Turno não identificado no texto.");
         return;
     }
 
@@ -543,7 +559,6 @@ window.lerMensagemWhatsApp = async function() {
         paineis: extrairValor("Pain[eé]is")
     };
 
-    // 5. INJEÇÃO DOS DADOS NA TABELA
     try {
         const idxFab = turno === "1" ? 0 : 1;
         const idxEst = turno === "1" ? 2 : 3;
@@ -555,11 +570,11 @@ window.lerMensagemWhatsApp = async function() {
         document.getElementById(`in-${idxMont}-${diaIndex}`).value = dadosLidos.montagem;
         document.getElementById(`in-${idxPainel}-${diaIndex}`).value = dadosLidos.paineis;
 
-        alert(`✅ Automação Concluída!\n\n1. Data lida: ${diaFormatado}/${mesFormatado}.\n2. Calendário ajustado para a semana correta.\n3. Dados do ${turno}º Turno injetados na ${diasNomes[diaIndex]}-feira.\n\nVerifique os números na tela e clique em "Guardar Lançamentos"!`);
+        alert(`✅ Automação Concluída!\n\nDados do ${turno}º Turno injetados. Verifique e salve.`);
         inputTexto.value = '';
 
     } catch (error) {
         console.error("Erro na injeção de dados:", error);
-        alert("❌ O robô leu os dados e atualizou o calendário, mas falhou ao preencher as caixas.");
+        alert("❌ Falha na injeção dos dados lidos para a tabela.");
     }
 };
