@@ -132,7 +132,8 @@ window.salvarTodosOsDados = async function() {
     });
 
     const textoResumoEl = document.getElementById('texto-resumo');
-    const textoResumo = textoResumoEl ? textoResumoEl.value.trim() : "";
+    // Dupla proteção: se o usuário digitar os símbolos, eles também são removidos ao salvar
+    const textoResumo = textoResumoEl ? textoResumoEl.value.replace(/[*_~]/g, '').trim() : "";
 
     try {
         await setDoc(doc(db, COLECAO_BD, chaveBancoAtual), {
@@ -373,8 +374,6 @@ const hoje = new Date();
 inputData.value = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')}`;
 processarDataCalendario();
 
-
-// --- 9. AUTO-LEITURA DE TEXTOS (WHATSAPP E RESUMO) ---
 window.lerMensagemWhatsApp = async function() {
     const inputTexto = document.getElementById('texto-whatsapp');
     const texto = inputTexto.value;
@@ -419,9 +418,16 @@ window.lerMensagemWhatsApp = async function() {
     } catch (error) { alert("❌ Falha na injeção dos dados lidos para a tabela."); }
 };
 
-// --- MÁGICA: AUTO-DETECTAR DATA DO RESUMO E MUDAR A SEMANA ---
-window.processarDataResumo = async function(texto) {
-    const trechoInicial = texto.substring(0, 100); // Lê só o comecinho para não pegar datas erradas no meio do texto
+// --- MÁGICA: AUTO-DETECTAR DATA DO RESUMO E LIMPAR WHATSAPP ---
+window.processarDataResumo = async function(textoOriginal) {
+    // 1. Limpeza Imediata da Formatação do WhatsApp (* _ ~)
+    const textoLimpo = textoOriginal.replace(/[*_~]/g, '');
+    
+    // Atualiza a caixa de texto instantaneamente na tela
+    document.getElementById('texto-resumo').value = textoLimpo;
+
+    // 2. Continua com a detecção de data
+    const trechoInicial = textoLimpo.substring(0, 100); 
     const regexBarra = /(\d{1,2})\/(\d{1,2})/;
     const regexExtenso = /(\d{1,2})\s*(?:de\s*)?-?\s*([a-zA-ZçÇ]{3,})/i;
 
@@ -459,8 +465,8 @@ window.processarDataResumo = async function(texto) {
             
             await window.processarDataCalendario();
             
-            // Restaura o texto que o usuário colou, pois o banco de dados carregou vazio
-            document.getElementById('texto-resumo').value = texto;
+            // Restaura o texto limpo, pois o banco de dados carregou os números da semana
+            document.getElementById('texto-resumo').value = textoLimpo;
         }
     }
 };
