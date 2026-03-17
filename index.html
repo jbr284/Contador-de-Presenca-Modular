@@ -1,108 +1,164 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Contador de Presença</title>
-  
-  <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#1e3a8a">
-  <link rel="icon" type="image/png" href="icons/icon-192x192.png">
-  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
-  
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modular | Contador de Presença</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="icon" type="image/png" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    <style>
+        :root { --primary: #2563eb; --primary-dark: #1d4ed8; --bg: #f8fafc; --surface: #ffffff; --text-main: #334155; --text-light: #64748b; --border: #e2e8f0; --success: #10b981; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text-main); }
+        
+        header { background: var(--surface); padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        header h1 { font-size: 1.25rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; }
+        
+        /* Navegação das Abas */
+        .nav-tabs { display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid var(--border); padding-bottom: 1rem; }
+        .nav-tab { background: none; border: none; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; color: var(--text-light); cursor: pointer; border-radius: 8px; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+        .nav-tab:hover { background: #e2e8f0; color: var(--text-main); }
+        .nav-tab.active { background: var(--primary); color: white; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2); }
+        
+        .tab-pane { display: none; animation: fadeIn 0.3s ease; }
+        .tab-pane.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Card de Leitura do WhatsApp */
+        .wa-card { background: var(--surface); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .wa-card h3 { font-size: 1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; color: #25d366; }
+        .wa-textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-family: 'Inter'; font-size: 0.9rem; resize: vertical; margin-bottom: 1rem; }
+        .wa-textarea:focus { outline: none; border-color: #25d366; box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1); }
+        
+        /* Controles de Data */
+        .date-control { background: var(--surface); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .input-date { padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-family: 'Inter'; font-size: 1rem; color: var(--text-main); outline: none; }
+        .input-date:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .week-display { font-size: 1.1rem; font-weight: 700; color: var(--primary-dark); background: #eff6ff; padding: 0.75rem 1.5rem; border-radius: 8px; border: 1px solid #bfdbfe; }
+
+        /* Grid do Formulário */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
+        .factory-area-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .factory-area-header { background: #f8fafc; padding: 1rem; font-weight: 700; color: var(--text-main); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+        .shift-row { padding: 1rem; border-bottom: 1px solid #f1f5f9; }
+        .shift-row:last-child { border-bottom: none; }
+        .shift-label { font-weight: 600; font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.5rem; text-transform: uppercase; }
+        .days-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+        .day-cell { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .day-cell label { font-size: 0.75rem; font-weight: 600; color: var(--text-light); }
+        .day-cell input { width: 100%; padding: 0.5rem; text-align: center; border: 1px solid var(--border); border-radius: 6px; font-family: 'Inter'; transition: all 0.2s; }
+        .day-cell input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+
+        /* Botões */
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Inter'; }
+        .btn-primary { background: var(--primary); color: white; width: 100%; padding: 1rem; font-size: 1.1rem; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2); }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+        .btn-wa { background: #25d366; color: white; width: 100%; }
+        .btn-wa:hover { background: #16a34a; }
+        .btn-excel { background: var(--success); color: white; }
+        .btn-excel:hover { background: #059669; }
+
+        /* Aba de Base de Dados (Sanfona) */
+        .controls-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap; background: var(--surface); padding: 1rem; border-radius: 12px; border: 1px solid var(--border); }
+        .search-box { flex: 1; min-width: 250px; position: relative; }
+        .search-box i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-light); }
+        .search-box input { width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border: 1px solid var(--border); border-radius: 8px; font-family: 'Inter'; font-size: 1rem; }
+        .search-box input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+
+        .acc-item { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 1rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .acc-header { padding: 1.2rem 1.5rem; background: #f8fafc; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: var(--text-main); transition: background 0.2s; }
+        .acc-header:hover { background: #f1f5f9; }
+        .acc-icon { transition: transform 0.3s ease; color: var(--text-light); }
+        .acc-item.active .acc-icon { transform: rotate(180deg); }
+        .acc-item.active .acc-header { border-bottom: 1px solid var(--border); }
+        .acc-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+        .acc-item.active .acc-content { max-height: 2000px; padding: 1.5rem; }
+
+        /* Tabela da Sanfona */
+        .hist-table-wrapper { overflow-x: auto; }
+        .hist-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 600px; }
+        .hist-table th { background: #eff6ff; color: var(--primary-dark); font-weight: 700; padding: 10px; text-align: center; border: 1px solid #bfdbfe; }
+        .hist-table td { padding: 10px; text-align: center; border: 1px solid var(--border); }
+        .td-area-hist { font-weight: 700; background: #f8fafc; text-align: left !important; }
+        .td-turno-hist { font-weight: 600; color: var(--text-light); background: #f8fafc; }
+        .td-total-hist { font-weight: 700; color: var(--primary-dark); background: #eff6ff; }
+        .row-total-hist td { font-weight: 700; background: #1e293b !important; color: white !important; border-color: #334155 !important; }
+
+    </style>
 </head>
 <body>
 
-  <header class="sys-header">
-      <div class="header-content">
-          <img src="logo-modular.png" alt="Modular" class="logo-top" onerror="this.style.display='none'">
-          <span class="app-title">Contador de Presença</span>
-      </div>
-  </header>
+    <header>
+        <h1><i class="fa-solid fa-users-gear"></i> Modular | Presença</h1>
+    </header>
 
-  <nav class="nav-tabs">
-      <div id="tab-btn-registro" class="nav-tab active" onclick="mudarAba('registro')">
-          <i class="fa-solid fa-pen-to-square"></i> Lançamentos
-      </div>
-      <div id="tab-btn-dados" class="nav-tab" onclick="mudarAba('dados')">
-          <i class="fa-solid fa-database"></i> Dados
-      </div>
-  </nav>
+    <div class="container">
+        
+        <div class="nav-tabs">
+            <button id="tab-btn-lancamento" class="nav-tab active" onclick="mudarAba('lancamento')"><i class="fa-solid fa-pen-to-square"></i> Lançamentos</button>
+            <button id="tab-btn-dados" class="nav-tab" onclick="mudarAba('dados')"><i class="fa-solid fa-database"></i> Base de Dados</button>
+        </div>
 
-  <main class="main-content">
-      
-      <section id="aba-registro" class="tab-pane active">
-          
-          <div class="sys-card card-whatsapp">
-              <div class="sys-card-title title-whatsapp">
-                  <i class="fa-brands fa-whatsapp"></i> Leitura Inteligente do Apontamento
-              </div>
-              <div class="input-group">
-                  <textarea id="texto-whatsapp" class="sys-input input-whatsapp" placeholder="Cole sua mensagem do Whatsapp aqui..."></textarea>
-              </div>
-              <button class="sys-btn btn-whatsapp" onclick="lerMensagemWhatsApp()">
-                  <i class="fa-solid fa-wand-magic-sparkles"></i> Processar e Preencher Tabela
-              </button>
-          </div>
+        <div id="aba-lancamento" class="tab-pane active">
+            
+            <div class="wa-card">
+                <h3><i class="fa-brands fa-whatsapp"></i> Leitura Automática do Supervisor</h3>
+                <textarea id="texto-whatsapp" class="wa-textarea" rows="4" placeholder="Cole aqui a mensagem padrão enviada pelo supervisor (Ex: Resumo de Faltas - 1º Turno - 16/03...)"></textarea>
+                <button class="btn btn-wa" onclick="lerMensagemWhatsApp()"><i class="fa-solid fa-robot"></i> Processar Mensagem e Preencher Tabela</button>
+            </div>
 
-          <div class="sys-card">
-              <div class="sys-card-title">Parâmetros do Lançamento</div>
-              <div class="input-group">
-                  <label class="input-label">Selecione uma data na semana de referência</label>
-                  <input type="date" id="input-data" class="sys-input" onchange="processarDataCalendario()">
-              </div>
-              <div id="display-semana-calculada" class="date-display">
-                  <i class="fa-solid fa-spinner fa-spin"></i> Carregando...
-              </div>
-          </div>
+            <div class="date-control">
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-light);">Data de Referência</label>
+                    <input type="date" id="input-data" class="input-date" onchange="processarDataCalendario()">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; flex: 1;">
+                    <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-light);">Semana Detectada</label>
+                    <div id="display-semana-calculada" class="week-display">--</div>
+                </div>
+            </div>
 
-          <div class="sys-card-title" style="margin-top: 30px;">Planilha de Produção</div>
-          <div id="form-areas"></div>
+            <div id="form-areas" class="form-grid">
+                </div>
 
-          <button class="sys-btn btn-primary btn-save" onclick="salvarTodosOsDados()" id="btn-save">
-              <i class="fa-solid fa-cloud-arrow-up"></i> Guardar Lançamentos
-          </button>
-      </section>
+            <div style="margin-bottom: 1.5rem; background: var(--surface); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                <h3 style="margin-top: 0; margin-bottom: 1rem; color: var(--text-main); font-size: 1rem; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-align-left" style="color: var(--primary);"></i> Resumo Gerencial da Semana
+                </h3>
+                <textarea id="texto-resumo" rows="6" placeholder="Cole ou digite o resumo da semana aqui. Ele será anexado ao histórico e exportado como um caderno de notas na planilha do Excel..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); font-family: 'Inter', sans-serif; font-size: 0.95rem; resize: vertical; outline: none; transition: border 0.2s;"></textarea>
+            </div>
 
-      <section id="aba-dados" class="tab-pane">
-          <div class="sys-card">
-              <div class="sys-card-title">Histórico de Apontamentos</div>
-              
-              <div class="search-bar">
-                  <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                  <input type="text" id="input-busca" class="sys-input" placeholder="Buscar semana (Ex: fev, mar...)" oninput="filtrarSanfona()" style="padding-left: 40px;">
-              </div>
+            <button id="btn-save" class="btn btn-primary" onclick="salvarTodosOsDados()"><i class="fa-solid fa-cloud-arrow-up"></i> Guardar Lançamentos da Semana</button>
+        </div>
 
-              <div id="accordion-container" class="accordion-wrapper">
-                  </div>
+        <div id="aba-dados" class="tab-pane">
+            <div class="controls-row">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="input-busca" placeholder="Buscar mês ou ano... (Ex: mar de 2026)" onkeyup="filtrarSanfona()">
+                </div>
+                <button class="btn btn-excel" onclick="gerarExcelMestre()"><i class="fa-solid fa-file-excel"></i> Exportar Planilha Excel</button>
+            </div>
 
-              <button class="sys-btn btn-excel" onclick="gerarExcelMestre()">
-                  <i class="fa-solid fa-download"></i> Exportar Planilha Mestre (.xlsx)
-              </button>
-          </div>
-      </section>
+            <div id="accordion-container">
+                </div>
+        </div>
 
-  </main>
+    </div>
 
-  <footer class="sys-footer">
-      <div class="footer-content">
-          <img src="logo-modular.png" alt="Modular" class="logo-bottom" onerror="this.style.display='none'">
-          <div class="war-cry">
-              <div>O FUTURO É MODULAR</div>
-              <div>MODULAR É O FUTURO</div>
-          </div>
-          <div class="footer-spacer"></div>
-      </div>
-  </footer>
+    <script type="module" src="app.js"></script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-  <script type="module" src="app.js"></script>
-
-  <script>
-    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); }); }
-  </script>
 </body>
 </html>
