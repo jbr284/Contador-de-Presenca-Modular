@@ -19,12 +19,15 @@
     <style>
         :root { --primary: #2563eb; --primary-dark: #1d4ed8; --bg: #f8fafc; --surface: #ffffff; --text-main: #334155; --text-light: #64748b; --border: #e2e8f0; --success: #10b981; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text-main); }
         
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; }
+        .container { flex: 1; max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; width: 100%; }
+        
+        /* Cabeçalho Restaurado */
         header { background: var(--surface); padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        header h1 { font-size: 1.25rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 10px; }
-        
-        .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; }
+        .header-brand { display: flex; align-items: center; gap: 15px; }
+        .header-brand img { max-height: 40px; object-fit: contain; }
+        header h1 { font-size: 1.25rem; font-weight: 700; color: var(--primary); margin: 0; }
         
         /* Navegação das Abas */
         .nav-tabs { display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid var(--border); padding-bottom: 1rem; }
@@ -96,12 +99,42 @@
         .td-total-hist { font-weight: 700; color: var(--primary-dark); background: #eff6ff; }
         .row-total-hist td { font-weight: 700; background: #1e293b !important; color: white !important; border-color: #334155 !important; }
 
+        /* Rodapé Original Restaurado */
+        .app-footer {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 1.5rem;
+            text-align: center;
+            margin-top: auto; 
+        }
+        .footer-logos {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        .footer-logos img {
+            max-height: 45px; 
+            object-fit: contain;
+        }
+        .footer-motto {
+            font-size: 0.9rem; 
+            color: var(--text-light); 
+            font-weight: 700; 
+            line-height: 1.5;
+            letter-spacing: 0.5px;
+        }
+
     </style>
 </head>
 <body>
 
     <header>
-        <h1><i class="fa-solid fa-users-gear"></i> Modular | Presença</h1>
+        <div class="header-brand">
+            <img src="logo-modular.png" alt="Logo Modular">
+            <h1>Contador de Presença</h1>
+        </div>
     </header>
 
     <div class="container">
@@ -137,7 +170,7 @@
                 <h3 style="margin-top: 0; margin-bottom: 1rem; color: var(--text-main); font-size: 1rem; display: flex; align-items: center; gap: 8px;">
                     <i class="fa-solid fa-align-left" style="color: var(--primary);"></i> Resumo Gerencial da Semana
                 </h3>
-                <textarea id="texto-resumo" onpaste="setTimeout(() => window.processarDataResumo(document.getElementById('texto-resumo').value), 100)" rows="6" placeholder="Cole ou digite o resumo da semana aqui. Ele será anexado ao histórico e exportado como um caderno de notas na planilha do Excel..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); font-family: 'Inter', sans-serif; font-size: 0.95rem; resize: vertical; outline: none; transition: border 0.2s;"></textarea>
+                <textarea id="texto-resumo" onpaste="setTimeout(() => window.processarDataResumo(document.getElementById('texto-resumo').value), 100)" rows="6" placeholder="Cole ou digite o resumo da semana aqui. O sistema limpará os símbolos do WhatsApp (* _ ~) automaticamente..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); font-family: 'Inter', sans-serif; font-size: 0.95rem; resize: vertical; outline: none; transition: border 0.2s;"></textarea>
             </div>
 
             <button id="btn-save" class="btn btn-primary" onclick="salvarTodosOsDados()"><i class="fa-solid fa-cloud-arrow-up"></i> Guardar Lançamentos da Semana</button>
@@ -157,6 +190,15 @@
         </div>
 
     </div>
+
+    <footer class="app-footer">
+        <div class="footer-logos">
+            <img src="logo-modular.png" alt="Logo Modular">
+        </div>
+        <p class="footer-motto">
+            O FUTURO É MODULAR.<br>MODULAR É O FUTURO.
+        </p>
+    </footer>
 
     <script type="module" src="app.js"></script>
 
