@@ -72,14 +72,19 @@ window.processarDataCalendario = async function() {
     try {
         const docRef = doc(db, COLECAO_BD, chaveBancoAtual);
         const docSnap = await getDoc(docRef);
-        const textoResumoEl = document.getElementById('texto-resumo');
+        
+        const txtT1 = document.getElementById('texto-resumo-t1');
+        const txtT2 = document.getElementById('texto-resumo-t2');
 
         if (docSnap.exists()) {
             dadosAtuais = docSnap.data().dados;
-            if(textoResumoEl) textoResumoEl.value = docSnap.data().resumo || "";
+            // Se tiver resumo antigo não mapeado, joga pro T1 pra não perder
+            if(txtT1) txtT1.value = docSnap.data().resumo_t1 || docSnap.data().resumo || "";
+            if(txtT2) txtT2.value = docSnap.data().resumo_t2 || "";
         } else {
             dadosAtuais = getEstruturaZerada();
-            if(textoResumoEl) textoResumoEl.value = "";
+            if(txtT1) txtT1.value = "";
+            if(txtT2) txtT2.value = "";
         }
         displaySemana.innerHTML = `<i class="fa-regular fa-calendar-check" style="margin-right:8px;"></i> ${textoVerticalCalculado}`;
         renderizarFormularioLote();
@@ -131,13 +136,17 @@ window.salvarTodosOsDados = async function() {
         }
     });
 
-    const textoResumoEl = document.getElementById('texto-resumo');
-    const textoResumo = textoResumoEl ? textoResumoEl.value.replace(/[*_~]/g, '').trim() : "";
+    const txtT1 = document.getElementById('texto-resumo-t1');
+    const txtT2 = document.getElementById('texto-resumo-t2');
+    
+    const resumoT1 = txtT1 ? txtT1.value.replace(/[*_~]/g, '').trim() : "";
+    const resumoT2 = txtT2 ? txtT2.value.replace(/[*_~]/g, '').trim() : "";
 
     try {
         await setDoc(doc(db, COLECAO_BD, chaveBancoAtual), {
             dados: dadosAtuais,
-            resumo: textoResumo,
+            resumo_t1: resumoT1,
+            resumo_t2: resumoT2,
             ultimaAtualizacao: new Date().toISOString()
         });
 
@@ -173,7 +182,11 @@ window.carregarHistoricoNuvem = async function() {
         historicoCompleto = [];
         querySnapshot.forEach((doc) => {
             historicoCompleto.push({
-                id: doc.id, dados: doc.data().dados, resumo: doc.data().resumo || "", atualizado: doc.data().ultimaAtualizacao
+                id: doc.id, 
+                dados: doc.data().dados, 
+                resumo_t1: doc.data().resumo_t1 || doc.data().resumo || "", 
+                resumo_t2: doc.data().resumo_t2 || "", 
+                atualizado: doc.data().ultimaAtualizacao
             });
         });
         historicoCompleto.sort((a, b) => converterIdParaData(b.id) - converterIdParaData(a.id));
@@ -200,14 +213,14 @@ function renderizarSanfona(termoBusca) {
         accHeader.innerHTML = `<span><i class="fa-regular fa-calendar-check" style="margin-right:8px;"></i> ${item.id}</span> <i class="fa-solid fa-chevron-down acc-icon"></i>`;
         const accContent = document.createElement('div'); accContent.className = 'acc-content';
         
-        accContent.innerHTML = gerarHTMLCardsResponsivos(item.dados, item.resumo); 
+        accContent.innerHTML = gerarHTMLCardsResponsivos(item.dados, item.resumo_t1, item.resumo_t2); 
 
         accHeader.onclick = () => { accItem.classList.toggle('active'); };
         accItem.appendChild(accHeader); accItem.appendChild(accContent); container.appendChild(accItem);
     });
 }
 
-function gerarHTMLCardsResponsivos(dadosDaSemana, textoResumo) {
+function gerarHTMLCardsResponsivos(dadosDaSemana, resumoT1, resumoT2) {
     let totaisDias = [0, 0, 0, 0, 0]; 
     let totalGeralSemana = 0;
     
@@ -277,20 +290,25 @@ function gerarHTMLCardsResponsivos(dadosDaSemana, textoResumo) {
                 </div>
             </div>
         </div>
-    </div>`;
+    </div></div>`;
 
-    html += `</div>`;
+    // JUNTA OS DOIS RESUMOS NA MESMA SANFONA
+    if (resumoT1 || resumoT2) {
+        let textoCombinadoHTML = "";
+        if (resumoT1) {
+            textoCombinadoHTML += `<strong style="color: var(--primary-dark); text-transform: uppercase; font-size: 0.85rem;">■ 1º TURNO:</strong><br>${resumoT1}`;
+        }
+        if (resumoT2) {
+            if(resumoT1) textoCombinadoHTML += `<br><br>`; // Dá um espaço se os dois existirem
+            textoCombinadoHTML += `<strong style="color: var(--primary-dark); text-transform: uppercase; font-size: 0.85rem;">■ 2º TURNO:</strong><br>${resumoT2}`;
+        }
 
-    // ========================================================
-    // NOVO: RESUMO EM FORMATO DE SANFONA (DETAILS/SUMMARY)
-    // ========================================================
-    if (textoResumo) {
         html += `
         <details style="margin-top: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--primary); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
             <summary style="padding: 12px 15px; font-weight: 700; color: var(--brand-dark); cursor: pointer; outline: none;">
                 <i class="fa-solid fa-align-left" style="color: var(--primary); margin-right: 8px;"></i> Resumo Gerencial da Semana <span style="font-size: 0.8rem; color: var(--text-light); font-weight: 500; margin-left: 5px;">(Toque para ler)</span>
             </summary>
-            <div style="padding: 15px; border-top: 1px solid var(--border); white-space: pre-wrap; font-size: 0.95rem; color: var(--text-main); line-height: 1.6; background: #f8fafc;">${textoResumo}</div>
+            <div style="padding: 15px; border-top: 1px solid var(--border); white-space: pre-wrap; font-size: 0.95rem; color: var(--text-main); line-height: 1.6; background: #f8fafc;">${textoCombinadoHTML}</div>
         </details>`;
     }
     
@@ -377,15 +395,21 @@ window.gerarExcelMestre = async function() {
             });
             for(let i = 1; i <= 8; i++) { worksheet.getCell(`I${linhaInicial+i}`).border.left = borderStyle; worksheet.getCell(`I${linhaInicial+i}`).border.right = borderStyle; }
 
+            // COMBINA OS TEXTOS PARA O EXCEL
+            let textoCombinadoExcel = "";
+            if (item.resumo_t1) textoCombinadoExcel += "[1º TURNO]\n" + item.resumo_t1 + "\n\n";
+            if (item.resumo_t2) textoCombinadoExcel += "[2º TURNO]\n" + item.resumo_t2;
+            textoCombinadoExcel = textoCombinadoExcel.trim();
+
             let saltoProximaTabela = 12; 
 
-            if (item.resumo) {
+            if (textoCombinadoExcel) {
                 const linhaResumo = linhaFinal + 2; 
                 const linhaResumoFim = linhaResumo + 6; 
                 worksheet.mergeCells(`A${linhaResumo}:I${linhaResumoFim}`);
                 
                 const cellR = worksheet.getCell(`A${linhaResumo}`);
-                cellR.value = "📝 RESUMO GERENCIAL DA SEMANA:\n\n" + item.resumo;
+                cellR.value = "📝 RESUMO GERENCIAL DA SEMANA:\n\n" + textoCombinadoExcel;
                 cellR.alignment = { vertical: 'top', horizontal: 'left', wrapText: true, indent: 1 };
                 cellR.font = { name: 'Arial', size: 10, italic: true, color: { argb: 'FF333333' } };
                 
@@ -466,9 +490,11 @@ window.lerMensagemWhatsApp = async function() {
     } catch (error) { alert("❌ Falha na injeção dos dados lidos para a tabela."); }
 };
 
-window.processarDataResumo = async function(textoOriginal) {
+window.processarDataResumo = async function(elementId) {
+    const el = document.getElementById(elementId);
+    const textoOriginal = el.value;
     const textoLimpo = textoOriginal.replace(/[*_~]/g, '');
-    document.getElementById('texto-resumo').value = textoLimpo;
+    el.value = textoLimpo;
 
     const trechoInicial = textoLimpo.substring(0, 100); 
     const regexBarra = /(\d{1,2})\/(\d{1,2})/;
@@ -505,7 +531,8 @@ window.processarDataResumo = async function(textoOriginal) {
             inputData.value = novaDataStr;
             alert(`✨ Data detectada no Resumo: ${diaF}/${mesF}.\nO sistema carregou a tabela correspondente para você!`);
             await window.processarDataCalendario();
-            document.getElementById('texto-resumo').value = textoLimpo;
+            // Restaura o texto colado após a troca de semana
+            document.getElementById(elementId).value = textoLimpo;
         }
     }
 };
