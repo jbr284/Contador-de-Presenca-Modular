@@ -37,8 +37,8 @@
         <div id="aba-lancamento" class="tab-pane active">
             
             <div class="wa-card">
-                <h3><i class="fa-brands fa-whatsapp"></i> Leitura Automática do Resumo diário</h3>
-                <textarea id="texto-whatsapp" class="wa-textarea" rows="4" placeholder="Cole aqui a mensagem padrão do Whatsapp (Ex: Resumo de Faltas - 1º Turno - 16/03...)"></textarea>
+                <h3><i class="fa-brands fa-whatsapp"></i> Leitura Automática do Supervisor</h3>
+                <textarea id="texto-whatsapp" class="wa-textarea" rows="4" placeholder="Cole aqui a mensagem padrão enviada pelo supervisor (Ex: Resumo de Faltas - 1º Turno - 16/03...)"></textarea>
                 <button class="btn btn-wa" onclick="lerMensagemWhatsApp()"><i class="fa-solid fa-robot"></i> Processar Mensagem e Preencher Tabela</button>
             </div>
 
@@ -57,10 +57,21 @@
                 </div>
 
             <div style="margin-bottom: 1.5rem; background: var(--surface); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                <h3 style="margin-top: 0; margin-bottom: 1rem; color: var(--text-main); font-size: 1rem; display: flex; align-items: center; gap: 8px;">
-                    <i class="fa-solid fa-align-left" style="color: var(--primary);"></i> Resumo Gerencial da Semana
+                <h3 style="margin-top: 0; margin-bottom: 1.5rem; color: var(--text-main); font-size: 1rem; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-align-left" style="color: var(--primary);"></i> Resumos Gerenciais da Semana
                 </h3>
-                <textarea id="texto-resumo" onpaste="setTimeout(() => window.processarDataResumo(document.getElementById('texto-resumo').value), 100)" rows="6" placeholder="Cole ou digite o resumo da semana aqui. ..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); font-family: 'Inter', sans-serif; font-size: 0.95rem; resize: vertical; outline: none; transition: border 0.2s;"></textarea>
+                
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 700; color: var(--text-light); margin-bottom: 8px; display: block; text-transform: uppercase;">Resumo - 1º Turno</label>
+                        <textarea id="texto-resumo-t1" onpaste="setTimeout(() => window.processarDataResumo('texto-resumo-t1'), 100)" rows="4" placeholder="Cole ou digite o resumo do 1º Turno aqui..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); font-family: 'Inter', sans-serif; font-size: 0.95rem; resize: vertical; outline: none; transition: border 0.2s;"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 700; color: var(--text-light); margin-bottom: 8px; display: block; text-transform: uppercase;">Resumo - 2º Turno</label>
+                        <textarea id="texto-resumo-t2" onpaste="setTimeout(() => window.processarDataResumo('texto-resumo-t2'), 100)" rows="4" placeholder="Cole ou digite o resumo do 2º Turno aqui..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); font-family: 'Inter', sans-serif; font-size: 0.95rem; resize: vertical; outline: none; transition: border 0.2s;"></textarea>
+                    </div>
+                </div>
             </div>
 
             <button id="btn-save" class="btn btn-primary" onclick="salvarTodosOsDados()"><i class="fa-solid fa-cloud-arrow-up"></i> Guardar Lançamentos da Semana</button>
