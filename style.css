@@ -100,10 +100,13 @@ header h1 { font-size: 1.3rem; font-weight: 700; color: #ffffff; margin: 0; lett
 .acc-icon { transition: transform 0.3s ease; color: var(--text-light); }
 .acc-item.active .acc-icon { transform: rotate(180deg); }
 .acc-item.active .acc-header { border-bottom: 1px solid var(--border); }
-.acc-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
-.acc-item.active .acc-content { max-height: 2000px; padding: 1.5rem; }
 
-/* Tabela da Sanfona */
+/* --- AQUI ESTÁ A CORREÇÃO DE OURO PARA O MOBILE --- */
+.acc-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-in-out; }
+/* O limite foi aumentado para 10000px, garantindo que o texto nunca mais seja cortado */
+.acc-item.active .acc-content { max-height: 10000px; padding: 1.5rem; }
+
+/* Tabela da Sanfona (Backup para desktop, se houver) */
 .hist-table-wrapper { overflow-x: auto; }
 .hist-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 600px; }
 .hist-table th { background: #eff6ff; color: var(--primary-dark); font-weight: 700; padding: 10px; text-align: center; border: 1px solid #bfdbfe; }
